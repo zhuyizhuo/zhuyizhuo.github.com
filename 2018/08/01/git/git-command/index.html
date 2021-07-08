@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhuyizhuo.online","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一般来说，下图这些命令已经足够日常使用。但是有些时候，我们还需要使用其它的一些不太常用的命令。    下面是我整理的常用 Git 命令。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 常用命令整理">
+<meta property="og:url" content="http://zhuyizhuo.online/2018/08/01/git/git-command/index.html">
+<meta property="og:site_name" content="一卓的博客">
+<meta property="og:description" content="一般来说，下图这些命令已经足够日常使用。但是有些时候，我们还需要使用其它的一些不太常用的命令。    下面是我整理的常用 Git 命令。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhuyizhuo.online/assets/picture/git-command/bg2015120901.png">
+<meta property="article:published_time" content="2018-07-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-06-17T03:23:39.000Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhuyizhuo.online/assets/picture/git-command/bg2015120901.png">
+
+<link rel="canonical" href="http://zhuyizhuo.online/2018/08/01/git/git-command/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Git 常用命令整理 | 一卓的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一卓的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一卓的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">怕什么真理无穷，<br>进一寸有一寸的欢喜。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zhuyizhuo.online/2018/08/01/git/git-command/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git 常用命令整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-01 00:00:00" itemprop="dateCreated datePublished" datetime="2018-08-01T00:00:00+08:00">2018-08-01</time>
+            </span>
+
+          
+            <span id="/2018/08/01/git/git-command/" class="post-meta-item leancloud_visitors" data-flag-title="Git 常用命令整理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/08/01/git/git-command/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/08/01/git/git-command/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>一般来说，下图这些命令已经足够日常使用。但是有些时候，我们还需要使用其它的一些不太常用的命令。</p>
+</blockquote>
+<p><img src="/assets/picture/git-command/bg2015120901.png" alt="bg2015120901"></p>
+<blockquote>
+<p>下面是我整理的常用 Git 命令。</p>
+</blockquote>
+<a id="more"></a>
+
+<h2 id="Git-配置类命令"><a href="#Git-配置类命令" class="headerlink" title="Git 配置类命令"></a>Git 配置类命令</h2><blockquote>
+<p>基本上换电脑，或者需要添加/切换远程仓库的时候 才能用到</p>
+</blockquote>
+<h3 id="第一步：首先配置用户名和邮箱"><a href="#第一步：首先配置用户名和邮箱" class="headerlink" title="第一步：首先配置用户名和邮箱"></a>第一步：首先配置用户名和邮箱</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#配置或切换 git 用户名: </span><br><span class="line">git config --global user.name &quot;YOUR USERNAME&quot;</span><br><span class="line"># 配置或切换 git 邮箱:</span><br><span class="line">git config --global user.email &quot;YOUR EMAIL&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>配置完可以查看一下是否生效：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看用户</span><br><span class="line">git config user.name</span><br><span class="line"># 查看邮箱</span><br><span class="line">git config user.email</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二步：GIT-配置公钥"><a href="#第二步：GIT-配置公钥" class="headerlink" title="第二步：GIT 配置公钥"></a>第二步：GIT 配置公钥</h3><h4 id="1-生成密钥"><a href="#1-生成密钥" class="headerlink" title="1. 生成密钥"></a>1. 生成密钥</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 进入 Git 默认密钥目录</span><br><span class="line">cd ~&#x2F;.ssh</span><br><span class="line"># 列出文件</span><br><span class="line">ls </span><br><span class="line">如果有3个文件，则密钥已经生成，id_rsa.pub 就是公钥，可直接进入下面第二步；</span><br><span class="line"></span><br><span class="line">如果没有 .ssh 文件夹或者文件夹为空，则密钥没有生成，那么通过</span><br><span class="line">ssh-keygen -t rsa -C &quot;your email&quot;</span><br><span class="line">生成密钥</span><br><span class="line">会提示生成密钥的文件名及设置密码和确认密码  如果都不需设置 则直接三次回车</span><br><span class="line">tips：多账户配置此处需指定生成密钥的文件别名</span><br></pre></td></tr></table></figure>
+<h4 id="2-配置公钥"><a href="#2-配置公钥" class="headerlink" title="2. 配置公钥"></a>2. 配置公钥</h4><blockquote>
+<p>将公钥 <code>id_rsa.pub</code> 中的内容配置到 GitHub/GitLab/Gitee 上，一般为 Setting -&gt; SSH KEY</p>
+</blockquote>
+<h4 id="3-测试连接"><a href="#3-测试连接" class="headerlink" title="3. 测试连接"></a>3. 测试连接</h4><blockquote>
+<p>执行命令 <code>ssh -T git@github.com</code>  测试连接  出现提示如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The authenticity of host &#39;github.com (xx.11.22.33)&#39; can&#39;t be established.</span><br><span class="line">RSA key fingerprint is SHA256:nThxxxxxxxxxxxxxxxxxxxxxxxb8.</span><br><span class="line">Are you sure you want to continue connecting (yes&#x2F;no)?</span><br></pre></td></tr></table></figure>
+
+<p>输入 <code>yes</code> 继续；出现类似以下提示</p>
+<blockquote>
+<p>Hi xxx! you’ve successfully authenticated. Xxxxx….</p>
+</blockquote>
+<p>说明密钥配置成功,  <code>~/.ssh</code> 路径下会出现 <code>known_hosts</code> 文件。 </p>
+<p>接下来就可以正常使用 Git 从远程仓库 <code>clone</code> 或 <code>pull</code> 项目了。</p>
+<h2 id="Git-常用命令"><a href="#Git-常用命令" class="headerlink" title="Git 常用命令"></a>Git 常用命令</h2><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 把这个目录变成 Git 可以管理的仓库</span></span><br><span class="line">  git init</span><br><span class="line"><span class="meta">#</span><span class="bash"> 列出所有配置</span></span><br><span class="line">  git config --list</span><br><span class="line"><span class="meta">#</span><span class="bash"> 显示工作树的状态 常用，使用此命令 Git 会显示当前 Git 仓库的状态，并给出命令建议</span></span><br><span class="line">  git status</span><br><span class="line"><span class="meta">#</span><span class="bash"> 文件添加到仓库</span></span><br><span class="line">  git add [filename]</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 例：添加 README.md 到仓库</span></span><br><span class="line">  git add README.md </span><br><span class="line"><span class="meta">#</span><span class="bash"> 不但可以跟单一文件，还可以跟通配符，更可以跟目录。一个点就把当前目录下所有未追踪的文件全部 add </span></span><br><span class="line">  git add . </span><br><span class="line"><span class="meta">#</span><span class="bash"> 取消 add 的文件：如果手滑添加了不想添加的内容，例如 HelloWorld.class 文件，我们可以这样来取消暂存 HelloWorld.class 文件： </span></span><br><span class="line">  git reset HEAD HelloWorld.class</span><br><span class="line"><span class="meta">#</span><span class="bash"> git 撤销文件修改：在工作区修改，但并未提交到暂存区（即并没有add） 注意：git chekcout 是让文件回到最近一次该文件 git commit 或 git add 时的状态。如果一次也没 commit 和 add 过的文件无法使用该命令撤销。命令中的--很重要，没有--，就变成了“切换到另一个分支”的命令</span></span><br><span class="line">  git checkout -- &lt;file&gt;</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 例：readme.txt 文件修改后还未 git add，撤销 readme.txt 的修改</span></span><br><span class="line">  git checkout -- readme.txt</span><br><span class="line"><span class="meta">#</span><span class="bash"> 撤销全部文件修改</span></span><br><span class="line">  git checkout .</span><br><span class="line"><span class="meta">#</span><span class="bash"> 把文件提交到仓库 引号内是备注</span></span><br><span class="line">  git commit -m "first commit"</span><br><span class="line"><span class="meta">#</span><span class="bash"> 关联远程仓库</span></span><br><span class="line">  git remote add origin https://github.com/xxx.git</span><br><span class="line"><span class="meta">#</span><span class="bash"> 取消远程仓库的关联</span></span><br><span class="line">  git remote remove origin</span><br><span class="line"><span class="meta">#</span><span class="bash"> 拉取远程仓库所有内容 并与本地内容合并</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> git pull [remote]</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 把本地库的所有内容推送到远程库上</span></span><br><span class="line">  git push -u origin master</span><br><span class="line"><span class="meta">#</span><span class="bash"> git 查看远程仓库地址命令：</span></span><br><span class="line">  git remote -v</span><br><span class="line"><span class="meta">#</span><span class="bash"> 从另一个存储库下载对象和引用，和 git pull 相比，该命令不会强制合并，需要手动 merge。</span></span><br><span class="line">  git fetch [remote]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行命令 git fetch 取回更新后，可执行以下命令查看远程所有提交日志</span></span><br><span class="line">  git log -p FETCH_HEAD</span><br><span class="line"><span class="meta">#</span><span class="bash"> 显示本地的 master 分支和 origin/master 分支 所有历史提交日志</span></span><br><span class="line">  git log -p master origin/master</span><br><span class="line"><span class="meta">#</span><span class="bash"> 比较本地的 master 分支和 origin/master 分支的差别</span></span><br><span class="line">  git diff master origin/master</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建分支</span></span><br><span class="line">  git branch [branch]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 切换分支</span></span><br><span class="line">  git checkout [branch]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 新建一个分支，并切换到该分支</span></span><br><span class="line">  git checkout -b [branch]</span><br><span class="line"><span class="meta">#</span><span class="bash"> git checkout 命令加上 -b 参数表示创建并切换，相当于以下两条命令</span></span><br><span class="line">  git branch dev</span><br><span class="line">  git checkout dev</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 例：创建 dev 分支，然后切换到 dev 分支</span></span><br><span class="line">  git checkout -b dev</span><br><span class="line"><span class="meta">#</span><span class="bash"> 合并分支</span></span><br><span class="line">  git merge [branch]</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 例：把 dev 分支的工作成果合并到 master 分支上：</span></span><br><span class="line">  1.切换到 master 分支上</span><br><span class="line">  2.执行 git merge dev</span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除分支</span></span><br><span class="line">  git branch -d [branch]</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 例：git 删除本地分支</span></span><br><span class="line">  1.先切换到别的分支: git checkout dev_20180927</span><br><span class="line">  2.删除本地分支: git branch -d dev_20181018</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看分支</span></span><br><span class="line">  git branch</span><br><span class="line"><span class="meta">#</span><span class="bash"> 打 tag</span></span><br><span class="line">  git tag v1.0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 可以用命令 git tag 查看所有标签</span></span><br><span class="line">  git tag</span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看 tag</span></span><br><span class="line">  git show [tag]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果要推送某个标签到远程，使用命令</span></span><br><span class="line">  git push origin &lt;tagname&gt;</span><br><span class="line"><span class="meta">#</span><span class="bash"> 强制 push 当前分支到远程仓库，即使有冲突</span></span><br><span class="line">  git push -f origin master</span><br><span class="line"><span class="meta">#</span><span class="bash"> 版本回复</span></span><br><span class="line">  git reset --hard 1094a(版本号)</span><br><span class="line">版本号没必要写全，前几位就可以了，Git 会自动去找。当然也不能只写前一两位，因为 Git 可能会找到多个版本号，就无法确定是哪一个了。</span><br></pre></td></tr></table></figure>
+
+<h3 id="新建-Git-项目命令"><a href="#新建-Git-项目命令" class="headerlink" title="新建 Git 项目命令"></a>新建 Git 项目命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;# java-zookeeper&quot; &gt;&gt; README.md</span><br><span class="line">git init</span><br><span class="line">git add README.md</span><br><span class="line">git commit -m &quot;first commit&quot;</span><br><span class="line">git remote add origin https:&#x2F;&#x2F;github.com&#x2F;xxx.git</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<h2 id="Git-解决冲突"><a href="#Git-解决冲突" class="headerlink" title="Git 解决冲突"></a>Git 解决冲突</h2><blockquote>
+<p>简单暴力，合并时需要注意别覆盖了远程其他人的修改</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">先 commit 到本地仓库  然后 pull 远程仓库</span><br><span class="line">最后合并并提交</span><br></pre></td></tr></table></figure>
+
+<h2 id="忽略-SSL-验证"><a href="#忽略-SSL-验证" class="headerlink" title="忽略 SSL 验证"></a>忽略 SSL 验证</h2><blockquote>
+<p>当你通过 HTTPS 访问 Git 远程仓库，如果服务器的 SSL 证书未经过第三方机构签署，那么 Git 就会报错。</p>
+</blockquote>
+<p>解决办法：执行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global http.sslVerify false</span><br></pre></td></tr></table></figure>
+
+<h2 id="CRLF-问题解决办法"><a href="#CRLF-问题解决办法" class="headerlink" title="CRLF 问题解决办法"></a>CRLF 问题解决办法</h2><blockquote>
+<p>在使用 Git 时出现以下提示：</p>
+<p>Warn if CRLF line separators are about to be commited</p>
+</blockquote>
+<p><strong>问题参考链接</strong>：<a href="https://stackoverflow.com/questions/27730350/phpstorm-git-line-endings-changing-from-lf-to-crlf/27730561" target="_blank" rel="noopener">stackoverflow</a></p>
+<p>解决办法：执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.autocrlf input</span><br><span class="line">git config --global core.eol lf</span><br></pre></td></tr></table></figure>
+
+<h2 id="Git-多用户配置"><a href="#Git-多用户配置" class="headerlink" title="Git 多用户配置"></a>Git 多用户配置</h2><h3 id="第一步：生成密钥时指定别名"><a href="#第一步：生成密钥时指定别名" class="headerlink" title="第一步：生成密钥时指定别名"></a>第一步：生成密钥时指定别名</h3><blockquote>
+<p>通过 <code>ssh-keygen -t rsa -C &quot;这里填秘钥的备注信息&quot;</code> 生成秘钥，如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -C &quot;这里填秘钥的备注信息&quot;</span><br><span class="line">Generating public&#x2F;private rsa key pair.</span><br><span class="line">Enter file in which to save the key (&#x2F;Users&#x2F;zhuo&#x2F;.ssh&#x2F;id_rsa):</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>修改别名</p>
+<p>设置密码和确认密码  如果都不需设置 则直接回车</p>
+<p>如果多个平台不想公用一套密钥，则此步需生成多个密钥</p>
+</blockquote>
+<h3 id="第二步：配置公钥"><a href="#第二步：配置公钥" class="headerlink" title="第二步：配置公钥"></a>第二步：配置公钥</h3><blockquote>
+<p>将公钥 <code>id_rsa.pub</code> 中的内容配置到 GitHub/GitLab/Gitee 上，一般为 Setting -&gt; SSH KEY</p>
+</blockquote>
+<h3 id="第三步：配置-config-文件"><a href="#第三步：配置-config-文件" class="headerlink" title="第三步：配置 config 文件"></a>第三步：配置 config 文件</h3><blockquote>
+<p>在 .ssh 目录新建 config 文件,内容如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 配置 github.com   id_rsa_github 为生成密钥的时候指定的文件名</span><br><span class="line">Host github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    IdentityFile C:\Users\admin\.ssh\id_rsa_github</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    User yourname</span><br><span class="line">    </span><br><span class="line"># 配置 gitee.com</span><br><span class="line">Host gitee.com</span><br><span class="line">    HostName gitee.com</span><br><span class="line">    IdentityFile C:\Users\admin\.ssh\id_rsa_gitee</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    User yourname</span><br></pre></td></tr></table></figure>
+
+<h3 id="第四步：测试连接"><a href="#第四步：测试连接" class="headerlink" title="第四步：测试连接"></a>第四步：测试连接</h3><blockquote>
+<p>执行命令 <code>ssh -T git@github.com</code>  测试连接，参考上文</p>
+</blockquote>
+<p>如果测试连接失败，可删除 known_hosts 文件中的历史记录，重新测试</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zhuyizhuo.online/2018/08/01/git/git-command/" title="Git 常用命令整理">http://zhuyizhuo.online/2018/08/01/git/git-command/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/27/java/semantic-versionning/" rel="prev" title="版本号命名规则">
+      <i class="fa fa-chevron-left"></i> 版本号命名规则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/08/03/git/different-directories-use-different-user-names/" rel="next" title="配置 Git 多目录下区分不同用户的提交">
+      配置 Git 多目录下区分不同用户的提交 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-配置类命令"><span class="nav-number">1.</span> <span class="nav-text">Git 配置类命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步：首先配置用户名和邮箱"><span class="nav-number">1.1.</span> <span class="nav-text">第一步：首先配置用户名和邮箱</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步：GIT-配置公钥"><span class="nav-number">1.2.</span> <span class="nav-text">第二步：GIT 配置公钥</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-生成密钥"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 生成密钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-配置公钥"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 配置公钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-测试连接"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 测试连接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-常用命令"><span class="nav-number">2.</span> <span class="nav-text">Git 常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常用命令"><span class="nav-number">2.1.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新建-Git-项目命令"><span class="nav-number">2.2.</span> <span class="nav-text">新建 Git 项目命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-解决冲突"><span class="nav-number">3.</span> <span class="nav-text">Git 解决冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#忽略-SSL-验证"><span class="nav-number">4.</span> <span class="nav-text">忽略 SSL 验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CRLF-问题解决办法"><span class="nav-number">5.</span> <span class="nav-text">CRLF 问题解决办法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-多用户配置"><span class="nav-number">6.</span> <span class="nav-text">Git 多用户配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一步：生成密钥时指定别名"><span class="nav-number">6.1.</span> <span class="nav-text">第一步：生成密钥时指定别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二步：配置公钥"><span class="nav-number">6.2.</span> <span class="nav-text">第二步：配置公钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三步：配置-config-文件"><span class="nav-number">6.3.</span> <span class="nav-text">第三步：配置 config 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四步：测试连接"><span class="nav-number">6.4.</span> <span class="nav-text">第四步：测试连接</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhuyizhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      开源工具
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://zhuyizhuo.online/code-generator-doc/" title="http:&#x2F;&#x2F;zhuyizhuo.online&#x2F;code-generator-doc&#x2F;">代码生成器</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">217k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:17</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : true,
+      appId      : 'AWYESEbou6tCGQivun349qMS-gzGzoHsz',
+      appKey     : '39iQA2ICeAJJdL8qkQCUUeKk',
+      placeholder: "评论？不存在的……",
+      avatar     : 'gg',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

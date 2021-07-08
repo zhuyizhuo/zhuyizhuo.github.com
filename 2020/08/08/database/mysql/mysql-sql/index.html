@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhuyizhuo.online","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基础操作123456789101112131415161718192021222324252627282930313233343536373839404142-- 显示所有的库SHOW DATABASES;-- 创建数据库CREATE DATABASE MANAGEMENT;-- 选择库USE [数据库名];-- 显示所有的表SHOW TABLES;-- 显示建表语句SHOW CREATE TAB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 笔记整理">
+<meta property="og:url" content="http://zhuyizhuo.online/2020/08/08/database/mysql/mysql-sql/index.html">
+<meta property="og:site_name" content="一卓的博客">
+<meta property="og:description" content="基础操作123456789101112131415161718192021222324252627282930313233343536373839404142-- 显示所有的库SHOW DATABASES;-- 创建数据库CREATE DATABASE MANAGEMENT;-- 选择库USE [数据库名];-- 显示所有的表SHOW TABLES;-- 显示建表语句SHOW CREATE TAB">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-03-18T06:18:42.530Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zhuyizhuo.online/2020/08/08/database/mysql/mysql-sql/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL 笔记整理 | 一卓的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一卓的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一卓的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">怕什么真理无穷，<br>进一寸有一寸的欢喜。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zhuyizhuo.online/2020/08/08/database/mysql/mysql-sql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 笔记整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-08 00:00:00" itemprop="dateCreated datePublished" datetime="2020-08-08T00:00:00+08:00">2020-08-08</time>
+            </span>
+
+          
+            <span id="/2020/08/08/database/mysql/mysql-sql/" class="post-meta-item leancloud_visitors" data-flag-title="MySQL 笔记整理" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/08/08/database/mysql/mysql-sql/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/08/database/mysql/mysql-sql/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 显示所有的库</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">DATABASES</span>;</span><br><span class="line"><span class="comment">-- 创建数据库</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">MANAGEMENT</span>;</span><br><span class="line"><span class="comment">-- 选择库</span></span><br><span class="line"><span class="keyword">USE</span> [数据库名];</span><br><span class="line"><span class="comment">-- 显示所有的表</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">TABLES</span>;</span><br><span class="line"><span class="comment">-- 显示建表语句</span></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> [表名];</span><br><span class="line"><span class="comment">-- 显示表的定义信息 表结构</span></span><br><span class="line">DESC [表名];</span><br><span class="line"><span class="comment">-- 显示表的定义信息</span></span><br><span class="line"><span class="keyword">DESCRIBE</span> TABLENAME;</span><br><span class="line"><span class="comment">-- 修改表名</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> OLD_TABLE_NAME <span class="keyword">RENAME</span> <span class="keyword">TO</span> NEW_TABLE_NAME;</span><br><span class="line"><span class="comment">-- 显示版本信息</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">VERSION</span>();</span><br><span class="line"><span class="comment">-- 当前选中的库</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DATABASE</span>();</span><br><span class="line"><span class="comment">-- 显示当前登录用户</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">USER</span>();</span><br><span class="line"><span class="comment">-- 显示当前日期</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CURRENT_DATE</span>;</span><br><span class="line"><span class="comment">-- 显示当前日期</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CURDATE</span>();</span><br><span class="line"><span class="comment">-- 显示当前日期时间</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">NOW</span>();</span><br><span class="line"><span class="comment">-- 当前时间  时分秒</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CURRENT_TIME</span>; </span><br><span class="line"><span class="comment">-- 当前时间戳 年月日时分秒</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">CURRENT_TIMESTAMP</span>;</span><br><span class="line"><span class="comment">-- 截断表</span></span><br><span class="line"><span class="keyword">TRUNCATE</span> <span class="keyword">TABLE</span> XXX;</span><br><span class="line"><span class="comment">-- 删除表 ABC 如果存在删除 不存在则不报错</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> ABC;</span><br><span class="line"><span class="comment">-- 把USERNAME值赋给变量@A</span></span><br><span class="line"><span class="keyword">SELECT</span>  @A:= USERNAME  <span class="keyword">FROM</span>  <span class="keyword">USER</span> <span class="keyword">WHERE</span> <span class="keyword">ID</span> = <span class="number">1</span>;</span><br><span class="line"><span class="comment">-- 查询表结构 SQL</span></span><br><span class="line"><span class="keyword">SELECT</span>  col.* <span class="keyword">FROM</span> INFORMATION_SCHEMA.<span class="string">`COLUMNS`</span> <span class="keyword">col</span> <span class="keyword">WHERE</span> col.TABLE_SCHEMA=<span class="string">'schema'</span> <span class="keyword">AND</span> col.TABLE_NAME=<span class="string">'table'</span>;</span><br><span class="line"><span class="comment">-- 查询表名及表注释 SQL</span></span><br><span class="line"><span class="keyword">SELECT</span> TABLE_NAME,TABLE_COMMENT <span class="keyword">FROM</span>  INFORMATION_SCHEMA.<span class="string">`TABLES`</span>  <span class="keyword">WHERE</span>  TABLE_SCHEMA=<span class="string">'schema'</span>;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="常用-SQL"><a href="#常用-SQL" class="headerlink" title="常用 SQL"></a>常用 SQL</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 去除重复项</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> OWNER  <span class="keyword">FROM</span>  PET;</span><br><span class="line"><span class="comment">-- 批量插入</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> YOURTABLE <span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="number">2</span>), (<span class="number">5</span>, <span class="number">5</span>);</span><br><span class="line"><span class="comment">-- 设置表的自增主键从 1 开始</span></span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> 表名 AUTO_INCREMENT=<span class="number">1</span>;</span><br><span class="line"><span class="comment">-- 条件判断</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>, <span class="keyword">if</span>(sal &gt; <span class="number">3000</span>,<span class="string">'high'</span>,<span class="string">'low'</span>) <span class="keyword">from</span> sal;</span><br><span class="line"><span class="comment">-- count(*) 与 count(列名) 区别</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> <span class="keyword">user</span>; <span class="comment">-- 统计所有</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(<span class="keyword">name</span>) <span class="keyword">from</span> <span class="keyword">user</span>; <span class="comment">-- 只统计 name 非null 的数据</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 字符串转成时间</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">STR_TO_DATE</span>(<span class="string">"2018-02-01 23:00:00"</span> ,<span class="string">"%Y-%m-%d %H:%i:%S"</span>);</span><br><span class="line"><span class="comment">-- 字符串转时间戳</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">unix_timestamp</span>(<span class="string">'2018-12-05 01:10:00'</span>);</span><br><span class="line"><span class="comment">-- 字符串转时间戳</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">unix_timestamp</span>(<span class="string">'2018-12-05'</span>);</span><br><span class="line"><span class="comment">-- 时间戳转字符串</span></span><br><span class="line"><span class="keyword">select</span> from_unixtime(<span class="number">1543943400</span>,<span class="string">'%Y-%m-%d'</span>);</span><br><span class="line"><span class="comment">-- 在str中用replace_str替换search_str</span></span><br><span class="line"><span class="keyword">REPLACE</span> (<span class="keyword">str</span>, search_str ,replace_str)</span><br></pre></td></tr></table></figure>
+
+<h3 id="查询-Mysql-运行时参数"><a href="#查询-Mysql-运行时参数" class="headerlink" title="查询 Mysql 运行时参数"></a>查询 Mysql 运行时参数</h3><ul>
+<li><strong>Mysql 官方文档</strong>：<a href="https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html#sysvar_lower_case_table_names</a></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">-- 查看所有参数</span><br><span class="line">show variables;</span><br><span class="line">-- 模糊查询参数</span><br><span class="line">show variables like &#39;%packet%&#39;;</span><br><span class="line">show variables like &#39;%net_buffer%&#39;;</span><br><span class="line">-- 查看mysql 数据库编码:</span><br><span class="line">show variables like &#39;char%&#39;;</span><br><span class="line">show variables like &#39;collation_%&#39;;</span><br><span class="line">-- 查看数据存储目录:</span><br><span class="line">show variables like &#39;datadir&#39;;</span><br><span class="line">-- 查看锁等待:</span><br><span class="line">show variables like &#39;innodb_lock_wait_timeout&#39;;</span><br><span class="line">&#x2F;* 查看大小写敏感问题:</span><br><span class="line"> 取值范围有三个，分别是0、1、2. </span><br><span class="line"> 1. 设置成0：表名按你写的SQL大小写存储，大写就大写小写就小写，比较时大小写敏感。 </span><br><span class="line"> 2. 设置成1：表名转小写后存储到硬盘，比较时大小写不敏感。 </span><br><span class="line"> 3. 设置成2：表名按你写的SQL大小写存储，大写就大写小写就小写，比较时统一转小写比较。</span><br><span class="line"> 这个选项不仅仅适用于表名的大小写敏感，同样适用于数据库名和表别名。</span><br><span class="line">*&#x2F;</span><br><span class="line">show variables like &#39;lower_case_table_names%&#39;;</span><br><span class="line">-- 查询慢查询相关参数</span><br><span class="line">show variables like &#39;slow_query_log%&#39;</span><br><span class="line">-- 开启慢查询日志</span><br><span class="line">set global slow_query_log &#x3D; on</span><br><span class="line">set global slow_query_log_file &#x3D; &#39;&#x2F;var&#x2F;lib&#x2F;mysql&#x2F;gupaoedu-slow.log&#39;</span><br><span class="line">set global log_queries_not_using_indexes &#x3D; on</span><br><span class="line">-- 单位 秒</span><br><span class="line">set global long_query_time &#x3D; 0.1</span><br></pre></td></tr></table></figure>
+<h3 id="Mysql-查询正在执行的进程"><a href="#Mysql-查询正在执行的进程" class="headerlink" title="Mysql 查询正在执行的进程"></a>Mysql 查询正在执行的进程</h3><ul>
+<li>show processlist</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show processlist;</span><br><span class="line">+----+------+-------------------+-----------------+---------+------+-------+------------------+</span><br><span class="line">| Id | User | Host              | db              | Command | Time | State | Info             |</span><br><span class="line">+----+------+-------------------+-----------------+---------+------+-------+------------------+</span><br><span class="line">| 66 | zhuo | 172.17.0.11:45948 | yizhuo_projects | Sleep   |   53 |       | NULL             |</span><br><span class="line">| 67 | zhuo | 172.17.0.11:45952 | yizhuo_projects | Sleep   | 1502 |       | NULL             |</span><br><span class="line">| 68 | zhuo | 172.17.0.11:45954 | yizhuo_projects | Sleep   | 1502 |       | NULL             |</span><br><span class="line">| 69 | zhuo | 172.17.0.11:45968 | yizhuo_projects | Sleep   | 1492 |       | NULL             |</span><br><span class="line">| 70 | zhuo | 172.17.0.11:45978 | yizhuo_projects | Sleep   | 1487 |       | NULL             |</span><br><span class="line">| 71 | zhuo | 172.17.0.11:45982 | yizhuo_projects | Sleep   | 1482 |       | NULL             |</span><br><span class="line">| 72 | zhuo | 172.17.0.11:45988 | yizhuo_projects | Sleep   | 1480 |       | NULL             |</span><br><span class="line">| 73 | zhuo | 172.17.0.11:45992 | yizhuo_projects | Sleep   | 1476 |       | NULL             |</span><br><span class="line">| 74 | zhuo | 172.17.0.11:45996 | yizhuo_projects | Sleep   | 1473 |       | NULL             |</span><br><span class="line">| 75 | zhuo | 172.17.0.11:46004 | yizhuo_projects | Sleep   | 1465 |       | NULL             |</span><br><span class="line">| 76 | zhuo | localhost         | NULL            | Query   |    0 | init  | show processlist |</span><br><span class="line">+----+------+-------------------+-----------------+---------+------+-------+------------------+</span><br><span class="line">11 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>State 状态官网： <a href="https://dev.mysql.com/doc/refman/5.7/en/general-thread-states.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.7/en/general-thread-states.html</a></li>
+</ul>
+<blockquote>
+<p>大部分状态对应很快的操作，只要有一个线程保持同一个状态好几秒钟，那么可能是有问题发生了，需要检查一下。<br>还有其他的状态没在下面列出来，不过它们大部分只是在查看服务器是否有存在错误是才用得着。</p>
+</blockquote>
+<p>这个命令中最关键的就是 State 列，Mysql 列出的状态主要有以下几种：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Checking table</span><br><span class="line">-&gt; 正在检查数据表（这是自动的）。</span><br><span class="line">Closing tables</span><br><span class="line">-&gt; 正在将表中修改的数据刷新到磁盘中，同时正在关闭已经用完的表。这是一个很快的操作，如果不是这样的话，就应该确认磁盘空间是否已经满了或者磁盘是否正处于重负中。</span><br><span class="line">Connect Out</span><br><span class="line">-&gt; 复制从服务器正在连接主服务器。</span><br><span class="line">Copying to tmp table on disk</span><br><span class="line">-&gt; 由于临时结果集大于tmp_table_size，正在将临时表从内存存储转为磁盘存储以此节省内存。</span><br><span class="line">Creating tmp table</span><br><span class="line">-&gt; 正在创建临时表以存放部分查询结果。</span><br><span class="line">deleting from main table</span><br><span class="line">-&gt; 服务器正在执行多表删除中的第一部分，刚删除第一个表。</span><br><span class="line">deleting from reference tables</span><br><span class="line">-&gt; 服务器正在执行多表删除中的第二部分，正在删除其他表的记录。</span><br><span class="line">Flushing tables</span><br><span class="line">-&gt; 正在执行FLUSH TABLES，等待其他线程关闭数据表。</span><br><span class="line">Killed</span><br><span class="line">-&gt; 发送了一个kill请求给某线程，那么这个线程将会检查kill标志位，同时会放弃下一个kill请求。MySQL会在每次的主循环中检查kill标志位，不过有些情况下该线程可能会过一小段才能死掉。如果该线程程被其他线程锁住了，那么kill请求会在锁释放时马上生效。</span><br><span class="line">Locked</span><br><span class="line">-&gt; 被其他查询锁住了。</span><br><span class="line">Sending data</span><br><span class="line">-&gt; 正在处理SELECT查询的记录，同时正在把结果发送给客户端。</span><br><span class="line">Sorting for group</span><br><span class="line">-&gt; 正在为GROUP BY做排序。</span><br><span class="line">Sorting for order</span><br><span class="line">-&gt; 正在为ORDER BY做排序。</span><br><span class="line">Opening tables</span><br><span class="line">-&gt; 这个过程应该会很快，除非受到其他因素的干扰。例如，在执ALTER TABLE或LOCK TABLE语句行完以前，数据表无法被其他线程打开。正尝试打开一个表。</span><br><span class="line">Removing duplicates</span><br><span class="line">-&gt; 正在执行一个SELECT DISTINCT方式的查询，但是MySQL无法在前一个阶段优化掉那些重复的记录。因此，MySQL需要再次去掉重复的记录，然后再把结果发送给客户端。</span><br><span class="line">Reopen table</span><br><span class="line">-&gt; 获得了对一个表的锁，但是必须在表结构修改之后才能获得这个锁。已经释放锁，关闭数据表，正尝试重新打开数据表。</span><br><span class="line">Repair by sorting</span><br><span class="line">-&gt; 修复指令正在排序以创建索引。</span><br><span class="line">Repair with keycache</span><br><span class="line">-&gt; 修复指令正在利用索引缓存一个一个地创建新索引。它会比Repair by sorting慢些。</span><br><span class="line">Searching rows for update</span><br><span class="line">-&gt; 正在将符合条件的记录找出来以备更新。它必须在UPDATE要修改相关的记录之前就完成了。</span><br><span class="line">Sleeping</span><br><span class="line">-&gt; 正在等待客户端发送新请求.</span><br><span class="line">System lock</span><br><span class="line">-&gt; 正在等待取得一个外部的系统锁。如果当前没有运行多个mysqld服务器同时请求同一个表，那么可以通过增加--skip-external-locking参数来禁止外部系统锁。</span><br><span class="line">Upgrading lock</span><br><span class="line">-&gt; INSERT DELAYED正在尝试取得一个锁表以插入新记录。</span><br><span class="line">Updating</span><br><span class="line">-&gt; 正在搜索匹配的记录，并且修改它们。</span><br><span class="line">User Lock</span><br><span class="line">-&gt; 正在等待GET_LOCK()。</span><br><span class="line">Waiting for tables</span><br><span class="line">-&gt; 该线程得到通知，数据表结构已经被修改了，需要重新打开数据表以取得新的结构。然后，为了能的重新打开数据表，必须等到所有其他线程关闭这个表。以下几种情况下会产生这个通知：FLUSH TABLES tbl_name, ALTER TABLE, RENAME TABLE, REPAIR TABLE, ANALYZE TABLE,或OPTIMIZE TABLE。</span><br><span class="line">waiting for handler insert</span><br><span class="line">-&gt; INSERT DELAYED 已经处理完了所有待处理的插入操作，正在等待新的请求。</span><br></pre></td></tr></table></figure>
+
+<h3 id="排查问题常用-SQL"><a href="#排查问题常用-SQL" class="headerlink" title="排查问题常用 SQL"></a>排查问题常用 SQL</h3><p>按客户端 IP 分组，看哪个客户端的链接数最多</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> client_ip,<span class="keyword">count</span>(client_ip) <span class="keyword">as</span> client_num <span class="keyword">from</span> (<span class="keyword">select</span> substring_index(host,<span class="string">':'</span> ,<span class="number">1</span>) <span class="keyword">as</span> client_ip <span class="keyword">from</span> <span class="keyword">processlist</span> ) <span class="keyword">as</span> connect_info <span class="keyword">group</span> <span class="keyword">by</span> client_ip <span class="keyword">order</span> <span class="keyword">by</span> client_num <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+<p>查看正在执行的线程，并按 Time 倒排序，看看有没有执行时间特别长的线程</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> information_schema.processlist <span class="keyword">where</span> Command != <span class="string">'Sleep'</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="built_in">Time</span> <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+<p>找出所有执行时间超过 5 分钟的线程，拼凑出 kill 语句，方便后面查杀</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">concat</span>(<span class="string">'kill '</span>, <span class="keyword">id</span>, <span class="string">';'</span>) <span class="keyword">from</span> information_schema.processlist <span class="keyword">where</span> Command != <span class="string">'Sleep'</span> <span class="keyword">and</span> <span class="built_in">Time</span> &gt; <span class="number">300</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="built_in">Time</span> <span class="keyword">desc</span>;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zhuyizhuo.online/2020/08/08/database/mysql/mysql-sql/" title="MySQL 笔记整理">http://zhuyizhuo.online/2020/08/08/database/mysql/mysql-sql/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"><i class="fa fa-tag"></i> MySQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/28/java/uml/" rel="prev" title="UML 类图几种关系的总结">
+      <i class="fa fa-chevron-left"></i> UML 类图几种关系的总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/12/git/git-change-remote/" rel="next" title="Git 如何迁移项目至另一远程仓库并保留提交记录">
+      Git 如何迁移项目至另一远程仓库并保留提交记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础操作"><span class="nav-number">1.</span> <span class="nav-text">基础操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用-SQL"><span class="nav-number">2.</span> <span class="nav-text">常用 SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数"><span class="nav-number">3.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询-Mysql-运行时参数"><span class="nav-number">4.</span> <span class="nav-text">查询 Mysql 运行时参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql-查询正在执行的进程"><span class="nav-number">5.</span> <span class="nav-text">Mysql 查询正在执行的进程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#排查问题常用-SQL"><span class="nav-number">6.</span> <span class="nav-text">排查问题常用 SQL</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhuyizhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      开源工具
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://zhuyizhuo.online/code-generator-doc/" title="http:&#x2F;&#x2F;zhuyizhuo.online&#x2F;code-generator-doc&#x2F;">代码生成器</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">217k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:17</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : true,
+      appId      : 'AWYESEbou6tCGQivun349qMS-gzGzoHsz',
+      appKey     : '39iQA2ICeAJJdL8qkQCUUeKk',
+      placeholder: "评论？不存在的……",
+      avatar     : 'gg',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

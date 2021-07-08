@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhuyizhuo.online","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM 字节码指令大全，用到的时候来这查阅即可。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 虚拟机字节码指令表">
+<meta property="og:url" content="http://zhuyizhuo.online/2020/07/25/java/jvm-bytecode-instruction-table/index.html">
+<meta property="og:site_name" content="一卓的博客">
+<meta property="og:description" content="JVM 字节码指令大全，用到的时候来这查阅即可。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-30T09:19:22.607Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zhuyizhuo.online/2020/07/25/java/jvm-bytecode-instruction-table/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM 虚拟机字节码指令表 | 一卓的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="一卓的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">一卓的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">怕什么真理无穷，<br>进一寸有一寸的欢喜。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zhuyizhuo.online/2020/07/25/java/jvm-bytecode-instruction-table/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM 虚拟机字节码指令表
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-25 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-25T00:00:00+08:00">2020-07-25</time>
+            </span>
+
+          
+            <span id="/2020/07/25/java/jvm-bytecode-instruction-table/" class="post-meta-item leancloud_visitors" data-flag-title="JVM 虚拟机字节码指令表" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/07/25/java/jvm-bytecode-instruction-table/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/25/java/jvm-bytecode-instruction-table/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>6.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM 字节码指令大全，用到的时候来这查阅即可。</p>
+<a id="more"></a>
+
+<table>
+<thead>
+<tr>
+<th>字节码</th>
+<th>助记符</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x00</td>
+<td>nop</td>
+<td>None</td>
+</tr>
+<tr>
+<td>0x01</td>
+<td>aconst_null</td>
+<td>将null推送至栈顶</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>iconst_m1</td>
+<td>将int型-1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>iconst_0</td>
+<td>将int型0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>iconst_1</td>
+<td>将int型1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>iconst_2</td>
+<td>将int型2推送至栈顶</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>iconst_3</td>
+<td>将int型3推送至栈顶</td>
+</tr>
+<tr>
+<td>0x07</td>
+<td>iconst_4</td>
+<td>将int型4推送至栈顶</td>
+</tr>
+<tr>
+<td>0x08</td>
+<td>iconst_5</td>
+<td>将int型5推送至栈顶</td>
+</tr>
+<tr>
+<td>0x09</td>
+<td>lconst_0</td>
+<td>将long型0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0a</td>
+<td>lconst_1</td>
+<td>将long型1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0b</td>
+<td>fconst_0</td>
+<td>将float型0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0c</td>
+<td>fconst_1</td>
+<td>将float型1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0d</td>
+<td>fconst_2</td>
+<td>将float型2推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0e</td>
+<td>dconst_0</td>
+<td>将double型0推送至栈顶</td>
+</tr>
+<tr>
+<td>0x0f</td>
+<td>dconst_1</td>
+<td>将double型1推送至栈顶</td>
+</tr>
+<tr>
+<td>0x10</td>
+<td>bipush</td>
+<td>将单字节的常量值(-128~127)推送至栈顶</td>
+</tr>
+<tr>
+<td>0x11</td>
+<td>sipush</td>
+<td>将一个短整型常量(-32768~32767)推送至栈顶</td>
+</tr>
+<tr>
+<td>0x12</td>
+<td>ldc</td>
+<td>将int,float或String型常量值从常量池中推送至栈顶</td>
+</tr>
+<tr>
+<td>0x13</td>
+<td>ldc_w</td>
+<td>将int,float或String型常量值从常量池中推送至栈顶(宽索引)</td>
+</tr>
+<tr>
+<td>0x14</td>
+<td>ldc2_w</td>
+<td>将long或double型常量值从常量池中推送至栈顶(宽索引)</td>
+</tr>
+<tr>
+<td>0x15</td>
+<td>iload</td>
+<td>将指定的int型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x16</td>
+<td>lload</td>
+<td>将指定的long型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x17</td>
+<td>fload</td>
+<td>将指定的float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x18</td>
+<td>dload</td>
+<td>将指定的double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x19</td>
+<td>aload</td>
+<td>将指定的引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1a</td>
+<td>iload_0</td>
+<td>将第一个int型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1b</td>
+<td>iload_1</td>
+<td>将第二个int型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1c</td>
+<td>iload_2</td>
+<td>将第三个int型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1d</td>
+<td>iload_3</td>
+<td>将第四个int型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1e</td>
+<td>lload_0</td>
+<td>将第一个long型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x1f</td>
+<td>lload_1</td>
+<td>将第二个long型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x20</td>
+<td>lload_2</td>
+<td>将第三个long型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x21</td>
+<td>lload_3</td>
+<td>将第四个long型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x22</td>
+<td>fload_0</td>
+<td>将第一个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x23</td>
+<td>fload_1</td>
+<td>将第二个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x24</td>
+<td>fload_2</td>
+<td>将第三个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x25</td>
+<td>fload_3</td>
+<td>将第四个float型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x26</td>
+<td>dload_0</td>
+<td>将第一个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x27</td>
+<td>dload_1</td>
+<td>将第二个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x28</td>
+<td>dload_2</td>
+<td>将第三个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x29</td>
+<td>dload_3</td>
+<td>将第四个double型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2a</td>
+<td>aload_0</td>
+<td>将第一个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2b</td>
+<td>aload_1</td>
+<td>将第二个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2c</td>
+<td>aload_2</td>
+<td>将第三个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2d</td>
+<td>aload_3</td>
+<td>将第四个引用类型本地变量推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2e</td>
+<td>iaload</td>
+<td>将int型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x2f</td>
+<td>laload</td>
+<td>将long型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x30</td>
+<td>faload</td>
+<td>将float型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x31</td>
+<td>daload</td>
+<td>将double型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x32</td>
+<td>aaload</td>
+<td>将引用类型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x33</td>
+<td>baload</td>
+<td>将boolean或byte型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x34</td>
+<td>caload</td>
+<td>将char型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x35</td>
+<td>saload</td>
+<td>将short型数组指定索引的值推送至栈顶</td>
+</tr>
+<tr>
+<td>0x36</td>
+<td>istore</td>
+<td>将栈顶int型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x37</td>
+<td>lstore</td>
+<td>将栈顶long型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x38</td>
+<td>fstore</td>
+<td>将栈顶float型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x39</td>
+<td>dstore</td>
+<td>将栈顶double型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x3a</td>
+<td>astore</td>
+<td>将栈顶引用类型数值存入指定本地变量</td>
+</tr>
+<tr>
+<td>0x3b</td>
+<td>istore_0</td>
+<td>将栈顶int型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x3c</td>
+<td>istore_1</td>
+<td>将栈顶int型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x3d</td>
+<td>istore_2</td>
+<td>将栈顶int型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x3e</td>
+<td>istore_3</td>
+<td>将栈顶int型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x3f</td>
+<td>lstore_0</td>
+<td>将栈顶long型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x40</td>
+<td>lstore_1</td>
+<td>将栈顶long型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x41</td>
+<td>lstore_2</td>
+<td>将栈顶long型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x42</td>
+<td>lstore_3</td>
+<td>将栈顶long型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x43</td>
+<td>fstore_0</td>
+<td>将栈顶float型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x44</td>
+<td>fstore_1</td>
+<td>将栈顶float型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x45</td>
+<td>fstore_2</td>
+<td>将栈顶float型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x46</td>
+<td>fstore_3</td>
+<td>将栈顶float型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x47</td>
+<td>dstore_0</td>
+<td>将栈顶double型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x48</td>
+<td>dstore_1</td>
+<td>将栈顶double型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x49</td>
+<td>dstore_2</td>
+<td>将栈顶double型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x4a</td>
+<td>dstore_3</td>
+<td>将栈顶double型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x4b</td>
+<td>astore_0</td>
+<td>将栈顶引用型数值存入第一个本地变量</td>
+</tr>
+<tr>
+<td>0x4c</td>
+<td>astore_1</td>
+<td>将栈顶引用型数值存入第二个本地变量</td>
+</tr>
+<tr>
+<td>0x4d</td>
+<td>astore_2</td>
+<td>将栈顶引用型数值存入第三个本地变量</td>
+</tr>
+<tr>
+<td>0x4e</td>
+<td>astore_3</td>
+<td>将栈顶引用型数值存入第四个本地变量</td>
+</tr>
+<tr>
+<td>0x4f</td>
+<td>iastore</td>
+<td>将栈顶int型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x50</td>
+<td>lastore</td>
+<td>将栈顶long型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x51</td>
+<td>fastore</td>
+<td>将栈顶float型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x52</td>
+<td>dastore</td>
+<td>将栈顶double型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x53</td>
+<td>aastore</td>
+<td>将栈顶引用型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x54</td>
+<td>bastore</td>
+<td>将栈顶boolean或byte型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x55</td>
+<td>castore</td>
+<td>将栈顶char型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x56</td>
+<td>sastore</td>
+<td>将栈顶short型数值存入指定数组的指定索引位置</td>
+</tr>
+<tr>
+<td>0x57</td>
+<td>pop</td>
+<td></td>
+</tr>
+<tr>
+<td>0x58</td>
+<td>pop2</td>
+<td>将栈顶的一个(对于非long或double类型)或两个数值(对于非long或double的其他类型)弹出</td>
+</tr>
+<tr>
+<td>0x59</td>
+<td>dup</td>
+<td>复制栈顶数值并将复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5a</td>
+<td>dup_x1</td>
+<td>复制栈顶数值并将两个复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5b</td>
+<td>dup_x2</td>
+<td>复制栈顶数值并将三个(或两个)复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5c</td>
+<td>dup2</td>
+<td>复制栈顶一个(对于long或double类型)或两个(对于非long或double的其他类型)数值并将复制值压入栈顶</td>
+</tr>
+<tr>
+<td>0x5d</td>
+<td>dup2_x1</td>
+<td>dup_x1指令的双倍版本</td>
+</tr>
+<tr>
+<td>0x5e</td>
+<td>dup2_x2</td>
+<td>dup_x2指令的双倍版本</td>
+</tr>
+<tr>
+<td>0x5f</td>
+<td>swap</td>
+<td>将栈顶最顶端的两个数值互换(数值不能是long或double类型)</td>
+</tr>
+<tr>
+<td>0x60</td>
+<td>iadd</td>
+<td>将栈顶两int型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x61</td>
+<td>ladd</td>
+<td>将栈顶两long型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x62</td>
+<td>fadd</td>
+<td>将栈顶两float型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x63</td>
+<td>dadd</td>
+<td>将栈顶两double型数值相加并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x64</td>
+<td>isub</td>
+<td>将栈顶两int型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x65</td>
+<td>lsub</td>
+<td>将栈顶两long型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x66</td>
+<td>fsub</td>
+<td>将栈顶两float型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x67</td>
+<td>dsub</td>
+<td>将栈顶两double型数值相减并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x68</td>
+<td>imul</td>
+<td>将栈顶两int型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x69</td>
+<td>lmul</td>
+<td>将栈顶两long型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6a</td>
+<td>fmul</td>
+<td>将栈顶两float型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6b</td>
+<td>dmul</td>
+<td>将栈顶两double型数值相乘并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6c</td>
+<td>idiv</td>
+<td>将栈顶两int型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6d</td>
+<td>ldiv</td>
+<td>将栈顶两long型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6e</td>
+<td>fdiv</td>
+<td>将栈顶两float型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x6f</td>
+<td>ddiv</td>
+<td>将栈顶两double型数值相除并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x70</td>
+<td>irem</td>
+<td>将栈顶两int型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x71</td>
+<td>lrem</td>
+<td>将栈顶两long型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x72</td>
+<td>frem</td>
+<td>将栈顶两float型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x73</td>
+<td>drem</td>
+<td>将栈顶两double型数值作取模运算并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x74</td>
+<td>ineg</td>
+<td>将栈顶int型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x75</td>
+<td>lneg</td>
+<td>将栈顶long型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x76</td>
+<td>fneg</td>
+<td>将栈顶float型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x77</td>
+<td>dneg</td>
+<td>将栈顶double型数值取负并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x78</td>
+<td>ishl</td>
+<td>将int型数值左移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x79</td>
+<td>lshl</td>
+<td>将long型数值左移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7a</td>
+<td>ishr</td>
+<td>将int型数值右(带符号)移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7b</td>
+<td>lshr</td>
+<td>将long型数值右(带符号)移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7c</td>
+<td>iushr</td>
+<td>将int型数值右(无符号)移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7d</td>
+<td>lushr</td>
+<td>将long型数值右(无符号)移指定位数并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7e</td>
+<td>iand</td>
+<td>将栈顶两int型数值”按位与”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x7f</td>
+<td>land</td>
+<td>将栈顶两long型数值”按位与”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x80</td>
+<td>ior</td>
+<td>将栈顶两int型数值”按位或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x81</td>
+<td>lor</td>
+<td>将栈顶两long型数值”按位或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x82</td>
+<td>ixor</td>
+<td>将栈顶两int型数值”按位异或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x83</td>
+<td>lxor</td>
+<td>将栈顶两long型数值”按位异或”并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x84</td>
+<td>iinc</td>
+<td>将指定int型变量增加指定值(如i++, i–, i+=2等)</td>
+</tr>
+<tr>
+<td>0x85</td>
+<td>i2l</td>
+<td>将栈顶int型数值强制转换为long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x86</td>
+<td>i2f</td>
+<td>将栈顶int型数值强制转换为float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x87</td>
+<td>i2d</td>
+<td>将栈顶int型数值强制转换为double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x88</td>
+<td>l2i</td>
+<td>将栈顶long型数值强制转换为int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x89</td>
+<td>l2f</td>
+<td>将栈顶long型数值强制转换为float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8a</td>
+<td>l2d</td>
+<td>将栈顶long型数值强制转换为double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8b</td>
+<td>f2i</td>
+<td>将栈顶float型数值强制转换为int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8c</td>
+<td>f2l</td>
+<td>将栈顶float型数值强制转换为long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8d</td>
+<td>f2d</td>
+<td>将栈顶float型数值强制转换为double型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8e</td>
+<td>d2i</td>
+<td>将栈顶double型数值强制转换为int型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x8f</td>
+<td>d2l</td>
+<td>将栈顶double型数值强制转换为long型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x90</td>
+<td>d2f</td>
+<td>将栈顶double型数值强制转换为float型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x91</td>
+<td>i2b</td>
+<td>将栈顶int型数值强制转换为byte型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x92</td>
+<td>i2c</td>
+<td>将栈顶int型数值强制转换为char型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x93</td>
+<td>i2s</td>
+<td>将栈顶int型数值强制转换为short型数值并将结果压入栈顶</td>
+</tr>
+<tr>
+<td>0x94</td>
+<td>lcmp</td>
+<td>比较栈顶两long型数值大小, 并将结果(1, 0或-1)压入栈顶</td>
+</tr>
+<tr>
+<td>0x95</td>
+<td>fcmpl</td>
+<td>比较栈顶两float型数值大小, 并将结果(1, 0或-1)压入栈顶; 当其中一个数值为NaN时, 将-1压入栈顶</td>
+</tr>
+<tr>
+<td>0x96</td>
+<td>fcmpg</td>
+<td>比较栈顶两float型数值大小, 并将结果(1, 0或-1)压入栈顶; 当其中一个数值为NaN时, 将1压入栈顶</td>
+</tr>
+<tr>
+<td>0x97</td>
+<td>dcmpl</td>
+<td>比较栈顶两double型数值大小, 并将结果(1, 0或-1)压入栈顶; 当其中一个数值为NaN时, 将-1压入栈顶</td>
+</tr>
+<tr>
+<td>0x98</td>
+<td>dcmpg</td>
+<td>比较栈顶两double型数值大小, 并将结果(1, 0或-1)压入栈顶; 当其中一个数值为NaN时, 将1压入栈顶</td>
+</tr>
+<tr>
+<td>0x99</td>
+<td>ifeq</td>
+<td>当栈顶int型数值等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9a</td>
+<td>ifne</td>
+<td>当栈顶int型数值不等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9b</td>
+<td>iflt</td>
+<td>当栈顶int型数值小于0时跳转</td>
+</tr>
+<tr>
+<td>0x9c</td>
+<td>ifge</td>
+<td>当栈顶int型数值大于等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9d</td>
+<td>ifgt</td>
+<td>当栈顶int型数值大于0时跳转</td>
+</tr>
+<tr>
+<td>0x9e</td>
+<td>ifle</td>
+<td>当栈顶int型数值小于等于0时跳转</td>
+</tr>
+<tr>
+<td>0x9f</td>
+<td>if_icmpeq</td>
+<td>比较栈顶两int型数值大小, 当结果等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa0</td>
+<td>if_icmpne</td>
+<td>比较栈顶两int型数值大小, 当结果不等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa1</td>
+<td>if_icmplt</td>
+<td>比较栈顶两int型数值大小, 当结果小于0时跳转</td>
+</tr>
+<tr>
+<td>0xa2</td>
+<td>if_icmpge</td>
+<td>比较栈顶两int型数值大小, 当结果大于等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa3</td>
+<td>if_icmpgt</td>
+<td>比较栈顶两int型数值大小, 当结果大于0时跳转</td>
+</tr>
+<tr>
+<td>0xa4</td>
+<td>if_icmple</td>
+<td>比较栈顶两int型数值大小, 当结果小于等于0时跳转</td>
+</tr>
+<tr>
+<td>0xa5</td>
+<td>if_acmpeq</td>
+<td>比较栈顶两引用型数值, 当结果相等时跳转</td>
+</tr>
+<tr>
+<td>0xa6</td>
+<td>if_acmpne</td>
+<td>比较栈顶两引用型数值, 当结果不相等时跳转</td>
+</tr>
+<tr>
+<td>0xa7</td>
+<td>goto</td>
+<td>无条件跳转</td>
+</tr>
+<tr>
+<td>0xa8</td>
+<td>jsr</td>
+<td>跳转至指定的16位offset位置, 并将jsr的下一条指令地址压入栈顶</td>
+</tr>
+<tr>
+<td>0xa9</td>
+<td>ret</td>
+<td>返回至本地变量指定的index的指令位置(一般与jsr或jsr_w联合使用)</td>
+</tr>
+<tr>
+<td>0xaa</td>
+<td>tableswitch</td>
+<td>用于switch条件跳转, case值连续(可变长度指令)</td>
+</tr>
+<tr>
+<td>0xab</td>
+<td>lookupswitch</td>
+<td>用于switch条件跳转, case值不连续(可变长度指令)</td>
+</tr>
+<tr>
+<td>0xac</td>
+<td>ireturn</td>
+<td>从当前方法返回int</td>
+</tr>
+<tr>
+<td>0xad</td>
+<td>lreturn</td>
+<td>从当前方法返回long</td>
+</tr>
+<tr>
+<td>0xae</td>
+<td>freturn</td>
+<td>从当前方法返回float</td>
+</tr>
+<tr>
+<td>0xaf</td>
+<td>dreturn</td>
+<td>从当前方法返回double</td>
+</tr>
+<tr>
+<td>0xb0</td>
+<td>areturn</td>
+<td>从当前方法返回对象引用</td>
+</tr>
+<tr>
+<td>0xb1</td>
+<td>return</td>
+<td>从当前方法返回void</td>
+</tr>
+<tr>
+<td>0xb2</td>
+<td>getstatic</td>
+<td>获取指定类的静态域, 并将其压入栈顶</td>
+</tr>
+<tr>
+<td>0xb3</td>
+<td>putstatic</td>
+<td>为指定类的静态域赋值</td>
+</tr>
+<tr>
+<td>0xb4</td>
+<td>getfield</td>
+<td>获取指定类的实例域, 并将其压入栈顶</td>
+</tr>
+<tr>
+<td>0xb5</td>
+<td>putfield</td>
+<td>为指定类的实例域赋值</td>
+</tr>
+<tr>
+<td>0xb6</td>
+<td>invokevirtual</td>
+<td>调用实例方法</td>
+</tr>
+<tr>
+<td>0xb7</td>
+<td>invokespecial</td>
+<td>调用超类构建方法, 实例初始化方法, 私有方法</td>
+</tr>
+<tr>
+<td>0xb8</td>
+<td>invokestatic</td>
+<td>调用静态方法</td>
+</tr>
+<tr>
+<td>0xb9</td>
+<td>invokeinterface</td>
+<td>调用接口方法</td>
+</tr>
+<tr>
+<td>0xba</td>
+<td>invokedynamic</td>
+<td>调用动态方法</td>
+</tr>
+<tr>
+<td>0xbb</td>
+<td>new</td>
+<td>创建一个对象, 并将其引用引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbc</td>
+<td>newarray</td>
+<td>创建一个指定的原始类型(如int, float, char等)的数组, 并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbd</td>
+<td>anewarray</td>
+<td>创建一个引用型(如类, 接口, 数组)的数组, 并将其引用值压入栈顶</td>
+</tr>
+<tr>
+<td>0xbe</td>
+<td>arraylength</td>
+<td>获取数组的长度值并压入栈顶</td>
+</tr>
+<tr>
+<td>0xbf</td>
+<td>athrow</td>
+<td>将栈顶的异常抛出</td>
+</tr>
+<tr>
+<td>0xc0</td>
+<td>checkcast</td>
+<td>检验类型转换, 检验未通过将抛出 ClassCastException</td>
+</tr>
+<tr>
+<td>0xc1</td>
+<td>instanceof</td>
+<td>检验对象是否是指定类的实际, 如果是将1压入栈顶, 否则将0压入栈顶</td>
+</tr>
+<tr>
+<td>0xc2</td>
+<td>monitorenter</td>
+<td>获得对象的锁, 用于同步方法或同步块</td>
+</tr>
+<tr>
+<td>0xc3</td>
+<td>monitorexit</td>
+<td>释放对象的锁, 用于同步方法或同步块</td>
+</tr>
+<tr>
+<td>0xc4</td>
+<td>wide</td>
+<td>扩展本地变量的宽度</td>
+</tr>
+<tr>
+<td>0xc5</td>
+<td>multianewarray</td>
+<td>创建指定类型和指定维度的多维数组(执行该指令时, 操作栈中必须包含各维度的长度值), 并将其引用压入栈顶</td>
+</tr>
+<tr>
+<td>0xc6</td>
+<td>ifnull</td>
+<td>为null时跳转</td>
+</tr>
+<tr>
+<td>0xc7</td>
+<td>ifnonnull</td>
+<td>不为null时跳转</td>
+</tr>
+<tr>
+<td>0xc8</td>
+<td>goto_w</td>
+<td>无条件跳转(宽索引)</td>
+</tr>
+<tr>
+<td>0xc9</td>
+<td>jsr_w</td>
+<td>跳转至指定的32位offset位置, 并将jsr_w的下一条指令地址压入栈顶</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://zhuyizhuo.online/2020/07/25/java/jvm-bytecode-instruction-table/" title="JVM 虚拟机字节码指令表">http://zhuyizhuo.online/2020/07/25/java/jvm-bytecode-instruction-table/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i> JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/18/java/how-should-the-code-be-layered/" rel="prev" title="好的代码应如何分层?">
+      <i class="fa fa-chevron-left"></i> 好的代码应如何分层?
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/26/java/freemarker/" rel="next" title="Freemarker 常用命令整理">
+      Freemarker 常用命令整理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">If I get to be me, I belong.<br> If I have to be like you, I fit in.<br> 不安现状者， <br>热爱技术与生活。 <br>年轻无为，卖马为生。<br><br></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhuyizhuo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      开源工具
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://zhuyizhuo.online/code-generator-doc/" title="http:&#x2F;&#x2F;zhuyizhuo.online&#x2F;code-generator-doc&#x2F;">代码生成器</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">217k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:17</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+<script>
+  (function() {
+    function leancloudSelector(url) {
+      url = encodeURI(url);
+      return document.getElementById(url).querySelector('.leancloud-visitors-count');
+    }
+
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = decodeURI(visitors.id);
+      var title = visitors.dataset.flagTitle;
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            leancloudSelector(url).innerText = counter.time + 1;
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .catch(error => {
+                console.error('Failed to save visitor count', error);
+              });
+          } else {
+              Counter('post', '/classes/Counter', { title, url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.error('Failed to create', error);
+                });
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return decodeURI(element.id);
+      });
+
+      Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({ url: { '$in': entries } })))
+        .then(response => response.json())
+        .then(({ results }) => {
+          for (let url of entries) {
+            let target = results.find(item => item.url === url);
+            leancloudSelector(url).innerText = target ? target.time : 0;
+          }
+        })
+        .catch(error => {
+          console.error('LeanCloud Counter Error', error);
+        });
+    }
+
+    let { app_id, app_key, server_url } = {"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":false};
+    function fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${api_server}/1.1${url}`, {
+          method,
+          headers: {
+            'X-LC-Id'     : app_id,
+            'X-LC-Key'    : app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        if (CONFIG.hostname !== location.hostname) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    }
+
+    let api_server = app_id.slice(-9) !== '-MdYXbMMI' ? server_url : `https://${app_id.slice(0, 8).toLowerCase()}.api.lncldglobal.com`;
+
+    if (api_server) {
+      fetchData(api_server);
+    } else {
+      fetch('https://app-router.leancloud.cn/2/route?appId=' + app_id)
+        .then(response => response.json())
+        .then(({ api_server }) => {
+          fetchData('https://' + api_server);
+        });
+    }
+  })();
+</script>
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : true,
+      appId      : 'AWYESEbou6tCGQivun349qMS-gzGzoHsz',
+      appKey     : '39iQA2ICeAJJdL8qkQCUUeKk',
+      placeholder: "评论？不存在的……",
+      avatar     : 'gg',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
