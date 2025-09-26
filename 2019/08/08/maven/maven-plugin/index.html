@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="常用 Maven 插件介绍我们都知道 Maven 本质上是一个插件框架，它的核心并不执行任何具体的构建任务，所有 这些任务都交给插件来完成，例如编译源代码是由 maven- compiler-plugin 完成的。进一步说，每个任务对应了一个插件目标（goal），每个插件会有一个或者多个目标，例如 maven- compiler-plugin 的 compile 目标用来编译位于src&#x2F;main&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用 Maven 插件介绍">
+<meta property="og:url" content="https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="常用 Maven 插件介绍我们都知道 Maven 本质上是一个插件框架，它的核心并不执行任何具体的构建任务，所有 这些任务都交给插件来完成，例如编译源代码是由 maven- compiler-plugin 完成的。进一步说，每个任务对应了一个插件目标（goal），每个插件会有一个或者多个目标，例如 maven- compiler-plugin 的 compile 目标用来编译位于src&#x2F;main&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-26T09:36:22.832Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Maven">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/","path":"2019/08/08/maven/maven-plugin/","title":"常用 Maven 插件介绍"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>常用 Maven 插件介绍 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8-Maven-%E6%8F%92%E4%BB%B6%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">常用 Maven 插件介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-antrun-plugin"><span class="nav-number">1.1.</span> <span class="nav-text">maven-antrun-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-archetype-plugin"><span class="nav-number">1.2.</span> <span class="nav-text">maven-archetype-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-assembly-plugin"><span class="nav-number">1.3.</span> <span class="nav-text">maven-assembly-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-dependency-plugin"><span class="nav-number">1.4.</span> <span class="nav-text">maven-dependency-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-enforcer-plugin"><span class="nav-number">1.5.</span> <span class="nav-text">maven-enforcer-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-help-plugin"><span class="nav-number">1.6.</span> <span class="nav-text">maven-help-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-release-plugin"><span class="nav-number">1.7.</span> <span class="nav-text">maven-release-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-resources-plugin"><span class="nav-number">1.8.</span> <span class="nav-text">maven-resources-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven-surefire-plugin"><span class="nav-number">1.9.</span> <span class="nav-text">maven-surefire-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#build-helper-maven-plugin"><span class="nav-number">1.10.</span> <span class="nav-text">build-helper-maven-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exec-maven-plugin"><span class="nav-number">1.11.</span> <span class="nav-text">exec-maven-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jetty-maven-plugin"><span class="nav-number">1.12.</span> <span class="nav-text">jetty-maven-plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#versions-maven-plugin"><span class="nav-number">1.13.</span> <span class="nav-text">versions-maven-plugin</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常用 Maven 插件介绍
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-08 00:00:00" itemprop="dateCreated datePublished" datetime="2019-08-08T00:00:00+08:00">2019-08-08</time>
+    </span>
+
+  
+    <span id="/2019/08/08/maven/maven-plugin/" class="post-meta-item leancloud_visitors" data-flag-title="常用 Maven 插件介绍" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="常用-Maven-插件介绍"><a href="#常用-Maven-插件介绍" class="headerlink" title="常用 Maven 插件介绍"></a>常用 Maven 插件介绍</h1><p>我们都知道 Maven 本质上是一个插件框架，它的核心并不执行任何具体的构建任务，所有 这些任务都交给插件来完成，例如编译源代码是由 <code>maven- compiler-plugin</code> 完成的。进一步说，每个任务对应了一个插件目标（goal），每个插件会有一个或者多个目标，例如 <code>maven- compiler-plugin</code> 的 compile 目标用来编译位于<code>src/main/java/</code>目录下的主源码，testCompile 目标用来编译位于<code>src/test/java/</code>目录下的测试源码。</p>
+<p>用户可以通过两种方式调用 Maven 插件目标。第一种方式是将插件目标与生命周期阶段（lifecycle phase）绑定，这样用户在命令行只是输入生命周期阶段而已，例如 Maven 默认将 maven-compiler-plugin 的 compile 目标与 compile 生命周期阶段绑定，因此命令 <strong>mvn compile</strong> 实际上是先定位到 compile 这一生命周期阶段，然后再根据绑定关系调用 maven-compiler-plugin 的 compile 目标。第二种方式是直接在命令行指定要执行的插件目标，例如 <strong>mvn archetype:generate</strong> 就表示调用 maven-archetype-plugin 的 generate 目标，这种带冒号的调用方式与生命周期无关。</p>
+<span id="more"></span>
+<p>认识上述 Maven 插件的基本概念能帮助你理解 Maven 的工作机制，不过要想更高效率地使用 Maven，了解一些常用的插件还是很有必要的，这可 以帮助你避免一不小心重新发明轮子。多年来 Maven 社区积累了大量的经验，并随之形成了一个成熟的插件生态圈。Maven 官方有两个插件列表，第一个列 表的 GroupId 为 org.apache.maven.plugins，这里的插件最为成熟，具体地址为：<span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9pbmRleC5odG1s">http://maven.apache.org/plugins/index.html<i class="fa fa-external-link-alt"></i></span>。第二个列表的 GroupId 为 org.codehaus.mojo，这里的插件没有那么核心，但也有不少十分有用，其地址为：<span class="exturl" data-url="aHR0cDovL21vam8uY29kZWhhdXMub3JnL3BsdWdpbnMuaHRtbA==">http://mojo.codehaus.org/plugins.html<i class="fa fa-external-link-alt"></i></span>。</p>
+<p>接下来笔者根据自己的经验介绍一些最常用的 Maven 插件，在不同的环境下它们各自都有其出色的表现，熟练地使用它们能让你的日常构建工作事半功倍。</p>
+<h2 id="maven-antrun-plugin"><a href="#maven-antrun-plugin" class="headerlink" title="maven-antrun-plugin"></a>maven-antrun-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1hbnRydW4tcGx1Z2luLw==">http://maven.apache.org/plugins/maven-antrun-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>maven-antrun-plugin 能让用户在 Maven 项目中运行 Ant 任务。用户可以直接在该插件的配置以 Ant 的方式编写 Target， 然后交给该插件的 run 目标去执行。在一些由 Ant 往 Maven 迁移的项目中，该插件尤其有用。此外当你发现需要编写一些自定义程度很高的任务，同时又觉 得 Maven 不够灵活时，也可以以 Ant 的方式实现之。maven-antrun-plugin 的 run 目标通常与生命周期绑定运行。</p>
+<h2 id="maven-archetype-plugin"><a href="#maven-archetype-plugin" class="headerlink" title="maven-archetype-plugin"></a>maven-archetype-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvYXJjaGV0eXBlL21hdmVuLWFyY2hldHlwZS1wbHVnaW4v">http://maven.apache.org/archetype/maven-archetype-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>Archtype 指项目的骨架，Maven 初学者最开始执行的 Maven 命令可能就是<strong>mvn archetype:generate</strong>，这实际上就是让 maven-archetype-plugin 生成一个很简单的项目骨架，帮助开发者快速上手。可能也有人看到一些文档写了 <strong>mvn archetype:create</strong>， 但实际上 create 目标已经被弃用了，取而代之的是 generate 目标，该目标使用交互式的方式提示用户输入必要的信息以创建项目，体验更好。 maven-archetype-plugin 还有一些其他目标帮助用户自己定义项目原型，例如你由一个产品需要交付给很多客户进行二次开发，你就可以为 他们提供一个 Archtype，帮助他们快速上手。</p>
+<h2 id="maven-assembly-plugin"><a href="#maven-assembly-plugin" class="headerlink" title="maven-assembly-plugin"></a>maven-assembly-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1hc3NlbWJseS1wbHVnaW4v">http://maven.apache.org/plugins/maven-assembly-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>maven-assembly-plugin 的用途是制作项目分发包，该分发包可能包含了项目的可执行文件、源代码、readme、平台脚本等等。 maven-assembly-plugin 支持各种主流的格式如 zip、tar.gz、jar 和 war 等，具体打包哪些文件是高度可控的，例如用户可以 按文件级别的粒度、文件集级别的粒度、模块级别的粒度、以及依赖级别的粒度控制打包，此外，包含和排除配置也是支持的。maven-assembly- plugin 要求用户使用一个名为<code>assembly.xml</code>的元数据文件来表述打包，它的 single 目标可以直接在命令行调用，也可以被绑定至生命周期。</p>
+<h2 id="maven-dependency-plugin"><a href="#maven-dependency-plugin" class="headerlink" title="maven-dependency-plugin"></a>maven-dependency-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1kZXBlbmRlbmN5LXBsdWdpbi8=">http://maven.apache.org/plugins/maven-dependency-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>maven-dependency-plugin 最大的用途是帮助分析项目依赖，<strong>dependency:list</strong>能够列出项目最终解析到的依赖列表，<strong>dependency:tree</strong>能进一步的描绘项目依赖树，<strong>dependency:analyze</strong>可以告诉你项目依赖潜在的问题，如果你有直接使用到的却未声明的依赖，该目标就会发出警告。maven-dependency-plugin 还有很多目标帮助你操作依赖文件，例如<strong>dependency:copy-dependencies</strong>能将项目依赖从本地 Maven 仓库复制到某个特定的文件夹下面。</p>
+<h2 id="maven-enforcer-plugin"><a href="#maven-enforcer-plugin" class="headerlink" title="maven-enforcer-plugin"></a>maven-enforcer-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1lbmZvcmNlci1wbHVnaW4v">http://maven.apache.org/plugins/maven-enforcer-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>在一个稍大一点的组织或团队中，你无法保证所有成员都熟悉 Maven，那他们做一些比较愚蠢的事情就会变得很正常，例如给项目引入了外部的 SNAPSHOT 依赖而导致构建不稳定，使用了一个与大家不一致的 Maven 版本而经常抱怨构建出现诡异问题。maven-enforcer- plugin 能够帮助你避免之类问题，它允许你创建一系列规则强制大家遵守，包括设定 Java 版本、设定 Maven 版本、禁止某些依赖、禁止 SNAPSHOT 依赖。只要在一个父 POM 配置规则，然后让大家继承，当规则遭到破坏的时候，Maven 就会报错。除了标准的规则之外，你还可以扩展该插 件，编写自己的规则。maven-enforcer-plugin 的 enforce 目标负责检查规则，它默认绑定到生命周期的 validate 阶段。</p>
+<h2 id="maven-help-plugin"><a href="#maven-help-plugin" class="headerlink" title="maven-help-plugin"></a>maven-help-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1oZWxwLXBsdWdpbi8=">http://maven.apache.org/plugins/maven-help-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>maven-help-plugin 是一个小巧的辅助工具，最简单的<strong>help:system</strong>可以打印所有可用的环境变量和 Java 系统属性。<strong>help:effective-pom</strong>和<strong>help:effective-settings</strong>最 为有用，它们分别打印项目的有效 POM 和有效 settings，有效 POM 是指合并了所有父 POM（包括 Super POM）后的 XML，当你不确定 POM 的某些信息从何而来时，就可以查看有效 POM。有效 settings 同理，特别是当你发现自己配置的 settings.xml 没有生效时，就可以用<strong>help:effective-settings</strong>来验证。此外，maven-help-plugin 的 describe 目标可以帮助你描述任何一个 Maven 插件的信息，还有 all-profiles 目标和 active-profiles 目标帮助查看项目的 Profile。</p>
+<h2 id="maven-release-plugin"><a href="#maven-release-plugin" class="headerlink" title="maven-release-plugin"></a>maven-release-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1yZWxlYXNlLXBsdWdpbi8=">http://maven.apache.org/plugins/maven-release-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>maven-release-plugin 的用途是帮助自动化项目版本发布，它依赖于 POM 中的 SCM 信息。<strong>release:prepare</strong>用来准备版本发布，具体的工作包括检查是否有未提交代码、检查是否有 SNAPSHOT 依赖、升级项目的 SNAPSHOT 版本至 RELEASE 版本、为项目打标签等等。<strong>release:perform</strong>则 是签出标签中的 RELEASE 源码，构建并发布。版本发布是非常琐碎的工作，它涉及了各种检查，而且由于该工作仅仅是偶尔需要，因此手动操作很容易遗漏一 些细节，maven-release-plugin 让该工作变得非常快速简便，不易出错。maven-release-plugin 的各种目标通常直接在 命令行调用，因为版本发布显然不是日常构建生命周期的一部分。</p>
+<h2 id="maven-resources-plugin"><a href="#maven-resources-plugin" class="headerlink" title="maven-resources-plugin"></a>maven-resources-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1yZXNvdXJjZXMtcGx1Z2luLw==">http://maven.apache.org/plugins/maven-resources-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>为了使项目结构更为清晰，Maven 区别对待 Java 代码文件和资源文件，maven-compiler-plugin 用来编译 Java 代码，maven-resources-plugin 则用来处理资源文件。默认的主资源文件目录是<code>src/main/resources</code>，很多用户会需要添加额外的资源文件目录，这个时候就可以通过配置 maven-resources-plugin 来实现。此外，资源文件过滤也是 Maven 的一大特性，你可以在资源文件中使用*${propertyName}*形式的 Maven 属性，然后配置 maven-resources-plugin 开启对资源文件的过滤，之后就可以针对不同环境通过命令行或者 Profile 传入属性的值，以实现更为灵活的构建。</p>
+<h2 id="maven-surefire-plugin"><a href="#maven-surefire-plugin" class="headerlink" title="maven-surefire-plugin"></a>maven-surefire-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21hdmVuLmFwYWNoZS5vcmcvcGx1Z2lucy9tYXZlbi1zdXJlZmlyZS1wbHVnaW4v">http://maven.apache.org/plugins/maven-surefire-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>可能是由于历史的原因，Maven 2/3 中用于执行测试的插件不是 maven-test-plugin，而是 maven-surefire-plugin。其实大部分时间内，只要你的测试 类遵循通用的命令约定（以 Test 结尾、以 TestCase 结尾、或者以 Test 开头），就几乎不用知晓该插件的存在。然而在当你想要跳过测试、排除某些 测试类、或者使用一些 TestNG 特性的时候，了解 maven-surefire-plugin 的一些配置选项就很有用了。例如 <strong>mvn test -Dtest=FooTest</strong> 这样一条命令的效果是仅运行 FooTest 测试类，这是通过控制 maven-surefire-plugin 的 test 参数实现的。</p>
+<h2 id="build-helper-maven-plugin"><a href="#build-helper-maven-plugin" class="headerlink" title="build-helper-maven-plugin"></a>build-helper-maven-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21vam8uY29kZWhhdXMub3JnL2J1aWxkLWhlbHBlci1tYXZlbi1wbHVnaW4v">http://mojo.codehaus.org/build-helper-maven-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>Maven 默认只允许指定一个主 Java 代码目录和一个测试 Java 代码目录，虽然这其实是个应当尽量遵守的约定，但偶尔你还是会希望能够指定多个 源码目录（例如为了应对遗留项目），build-helper-maven-plugin 的 add-source 目标就是服务于这个目的，通常它被绑定到 默认生命周期的 generate-sources 阶段以添加额外的源码目录。需要强调的是，这种做法还是不推荐的，因为它破坏了 Maven 的约定，而且可能会遇到其他严格遵守约定的插件工具无法正确识别额外的源码目录。</p>
+<p>build-helper-maven-plugin 的另一个非常有用的目标是 attach-artifact，使用该目标你可以以 classifier 的形式选取部分项目文件生成附属构件，并同时 install 到本地仓库，也可以 deploy 到远程仓库。</p>
+<h2 id="exec-maven-plugin"><a href="#exec-maven-plugin" class="headerlink" title="exec-maven-plugin"></a>exec-maven-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21vam8uY29kZWhhdXMub3JnL2V4ZWMtbWF2ZW4tcGx1Z2luLw==">http://mojo.codehaus.org/exec-maven-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>exec-maven-plugin 很好理解，顾名思义，它能让你运行任何本地的系统程序，在某些特定情况下，运行一个 Maven 外部的程序可能就是最简单的问题解决方案，这就是<strong>exec:exec</strong>的 用途，当然，该插件还允许你配置相关的程序运行参数。除了 exec 目标之外，exec-maven-plugin 还提供了一个 java 目标，该目标要求你 提供一个 mainClass 参数，然后它能够利用当前项目的依赖作为 classpath，在同一个 JVM 中运行该 mainClass。有时候，为了简单的 演示一个命令行 Java 程序，你可以在 POM 中配置好 exec-maven-plugin 的相关运行参数，然后直接在命令运行 <strong>mvn exec:java</strong> 以查看运行效果。</p>
+<h2 id="jetty-maven-plugin"><a href="#jetty-maven-plugin" class="headerlink" title="jetty-maven-plugin"></a>jetty-maven-plugin</h2><p><span class="exturl" data-url="aHR0cDovL3dpa2kuZWNsaXBzZS5vcmcvSmV0dHkvRmVhdHVyZS9KZXR0eV9NYXZlbl9QbHVnaW4=">http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin<i class="fa fa-external-link-alt"></i></span></p>
+<p>在进行 Web 开发的时候，打开浏览器对应用进行手动的测试几乎是无法避免的，这种测试方法通常就是将项目打包成 war 文件，然后部署到 Web 容器 中，再启动容器进行验证，这显然十分耗时。为了帮助开发者节省时间，jetty-maven-plugin 应运而生，它完全兼容 Maven 项目的目录结构，能够周期性地检查源文件，一旦发现变更后自动更新到内置的 Jetty Web 容器中。做一些基本配置后（例如 Web 应用的 contextPath 和自动扫描变更的时间间隔），你只要执行 <strong>mvn jetty:run</strong> ，然后在 IDE 中修改代码，代码经 IDE 自动编译后产生变更，再由 jetty-maven-plugin 侦测到后更新至 Jetty 容器，这时你就可以直接 测试 Web 页面了。需要注意的是，jetty-maven-plugin 并不是宿主于 Apache 或 Codehaus 的官方插件，因此使用的时候需要额外 的配置<code>settings.xml</code>的 pluginGroups 元素，将 org.mortbay.jetty 这个 pluginGroup 加入。</p>
+<h2 id="versions-maven-plugin"><a href="#versions-maven-plugin" class="headerlink" title="versions-maven-plugin"></a>versions-maven-plugin</h2><p><span class="exturl" data-url="aHR0cDovL21vam8uY29kZWhhdXMub3JnL3ZlcnNpb25zLW1hdmVuLXBsdWdpbi8=">http://mojo.codehaus.org/versions-maven-plugin/<i class="fa fa-external-link-alt"></i></span></p>
+<p>很多 Maven 用户遇到过这样一个问题，当项目包含大量模块的时候，为他们集体更新版本就变成一件烦人的事情，到底有没有自动化工具能帮助完成这件 事情呢？（当然你可以使用 sed 之类的文本操作工具，不过不在本文讨论范围）答案是肯定的，versions-maven- plugin 提供了很多目标帮助你管理 Maven 项目的各种版本信息。例如最常用的，命令 <strong>mvn versions:set -DnewVersion=1.1-SNAPSHOT</strong> 就能帮助你把所有模块的版本更新到 1.1-SNAPSHOT。该插件还提供了其他一些很有用的目标，display-dependency- updates 能告诉你项目依赖有哪些可用的更新；类似的 display-plugin-updates 能告诉你可用的插件更新；然后 use- latest-versions 能自动帮你将所有依赖升级到最新版本。最后，如果你对所做的更改满意，则可以使用 <strong>mvn versions:commit</strong> 提交，不满意的话也可以使用 <strong>mvn versions:revert</strong> 进行撤销。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>本文介绍了一些最常用的 Maven 插件，这里指的“常用”是指经常需要进行配置的插件，事实上我们用 Maven 的时候很多其它插件也是必须的，例如 默认的编译插件 maven-compiler-plugin 和默认的打包插件 maven-jar-plugin，但因为很少需要对它们进行配置，因此不在 本文讨论范围。了解常用的 Maven 插件能帮助你事倍功半地完成项目构建任务，反之你就可能会因为经常遇到一些难以解决的问题而感到沮丧。本文介绍的插件 基本能覆盖大部分 Maven 用户的日常使用需要，如果你真有非常特殊的需求，自行编写一个 Maven 插件也不是难事，更何况还有这么多开放源代码的插件供 你参考。</p>
+<p>本文的这个插件列表并不是一个完整列表，读者有兴趣的话也可以去仔细浏览一下 Apache 和 Codehaus Mojo 的 Maven 插件列表，以的到一个更为全面的认识。最后，在线的 Maven 仓库搜索引擎如 <span class="exturl" data-url="aHR0cDovL3NlYXJjaC5tYXZlbi5vcmcv">http://search.maven.org/<i class="fa fa-external-link-alt"></i></span> 也能帮助你快速找到自己感兴趣的 Maven 插件。</p>
+<blockquote>
+<p>常用 Maven 插件介绍<br>转载自: <span class="exturl" data-url="aHR0cHM6Ly93d3cuY25ibG9ncy5jb20vanFtdG9ueS9wLzcyNTg1MTEuaHRtbA==">https://www.cnblogs.com/jqmtony/p/7258511.html<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/" title="常用 Maven 插件介绍">https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Maven/" rel="tag"><i class="fa fa-tag"></i> Maven</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/08/04/java/synchronize/" rel="prev" title="Synchronized 关键字详解">
+                  <i class="fa fa-chevron-left"></i> Synchronized 关键字详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/06/10/linux/terminal-linux-font-color/" rel="next" title="Linux 上设置终端输出内容的颜色">
+                  Linux 上设置终端输出内容的颜色 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">359k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:26</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":true,"custom_uv":false,"custom_pv":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://blog.zhuyizhuo.online/2019/08/08/maven/maven-plugin/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="之前上学的时候有这个一个梗，说在食堂里吃饭，吃完把餐盘端走清理的，是 C++ 程序员，吃完直接就走的，是 Java 程序员。 确实，在 Java 的世界里，似乎我们不用对垃圾回收那么的专注，很多初学者不懂 GC，也依然能写出一个能用甚至还不错的程序或系统。但其实这并不代表 Java 的 GC 就不重要。相反，它是那么的重要和复杂，以至于出了问题，那些初学者除了打开 GC 日志，看着一堆 0101">
+<meta property="og:type" content="article">
+<meta property="og:title" content="咱们从头到尾说一次 Java 垃圾回收">
+<meta property="og:url" content="https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="之前上学的时候有这个一个梗，说在食堂里吃饭，吃完把餐盘端走清理的，是 C++ 程序员，吃完直接就走的，是 Java 程序员。 确实，在 Java 的世界里，似乎我们不用对垃圾回收那么的专注，很多初学者不懂 GC，也依然能写出一个能用甚至还不错的程序或系统。但其实这并不代表 Java 的 GC 就不重要。相反，它是那么的重要和复杂，以至于出了问题，那些初学者除了打开 GC 日志，看着一堆 0101">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835150704.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835335078.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835347155.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835285237.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835381956.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835845758.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835460475.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835512668.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835594986.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835613747.png">
+<meta property="og:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835637332.png">
+<meta property="article:published_time" content="2019-07-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-26T09:36:22.841Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="GC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.zhuyizhuo.online/assets/picture/java-gc/1562835150704.png">
+
+
+<link rel="canonical" href="https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/","path":"2019/07/11/java/java-gc/","title":"咱们从头到尾说一次 Java 垃圾回收"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>咱们从头到尾说一次 Java 垃圾回收 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.</span> <span class="nav-text">什么是垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%AE%9A%E4%B9%89%E5%9E%83%E5%9C%BE"><span class="nav-number">2.</span> <span class="nav-text">怎么定义垃圾</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">引用计数算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">可达性分析算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">3.</span> <span class="nav-text">Java 内存区域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88%EF%BC%88%E6%A0%88%E5%B8%A7%E4%B8%AD%E7%9A%84%E6%9C%AC%E5%9C%B0%E5%8F%98%E9%87%8F%E8%A1%A8%EF%BC%89%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.1.</span> <span class="nav-text">虚拟机栈（栈帧中的本地变量表）中引用的对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%AD%E7%B1%BB%E9%9D%99%E6%80%81%E5%B1%9E%E6%80%A7%E5%BC%95%E7%94%A8%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.2.</span> <span class="nav-text">方法区中类静态属性引用的对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA%E4%B8%AD%E5%B8%B8%E9%87%8F%E5%BC%95%E7%94%A8%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.3.</span> <span class="nav-text">方法区中常量引用的对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88%E4%B8%AD%E5%BC%95%E7%94%A8%E7%9A%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.4.</span> <span class="nav-text">本地方法栈中引用的对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%9B%9E%E6%94%B6%E5%9E%83%E5%9C%BE"><span class="nav-number">4.</span> <span class="nav-text">怎么回收垃圾</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">标记 - 清除算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">标记整理算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%9B%9E%E6%94%B6%E7%AD%96%E7%95%A5"><span class="nav-number">5.</span> <span class="nav-text">内存模型与回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Eden-%E5%8C%BA"><span class="nav-number">5.1.</span> <span class="nav-text">Eden 区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Survivor-%E5%8C%BA"><span class="nav-number">5.2.</span> <span class="nav-text">Survivor 区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E9%9C%80%E8%A6%81%EF%BC%9F"><span class="nav-number">5.2.1.</span> <span class="nav-text">为啥需要？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E5%95%A5%E9%9C%80%E8%A6%81%E4%BF%A9%EF%BC%9F"><span class="nav-number">5.2.2.</span> <span class="nav-text">为啥需要俩？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Old-%E5%8C%BA"><span class="nav-number">5.3.</span> <span class="nav-text">Old 区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.3.1.</span> <span class="nav-text">大对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%95%BF%E6%9C%9F%E5%AD%98%E6%B4%BB%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.3.2.</span> <span class="nav-text">长期存活对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84"><span class="nav-number">5.3.3.</span> <span class="nav-text">动态对象年龄</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          咱们从头到尾说一次 Java 垃圾回收
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-11 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-11T00:00:00+08:00">2019-07-11</time>
+    </span>
+
+  
+    <span id="/2019/07/11/java/java-gc/" class="post-meta-item leancloud_visitors" data-flag-title="咱们从头到尾说一次 Java 垃圾回收" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img data-src="/assets/picture/java-gc/1562835150704.png" alt="1562835150704"></p>
+<p>之前上学的时候有这个一个梗，说在食堂里吃饭，吃完把餐盘端走清理的，是 C++ 程序员，吃完直接就走的，是 Java 程序员。</p>
+<p>确实，在 Java 的世界里，似乎我们不用对垃圾回收那么的专注，很多初学者不懂 GC，也依然能写出一个能用甚至还不错的程序或系统。但其实这并不代表 Java 的 GC 就不重要。相反，它是那么的重要和复杂，以至于出了问题，那些初学者除了打开 GC 日志，看着一堆 0101 的天文，啥也做不了。</p>
+<p>今天我们就从头到尾完整地聊一聊 Java 的垃圾回收。</p>
+<span id="more"></span>
+
+<h2 id="什么是垃圾回收"><a href="#什么是垃圾回收" class="headerlink" title="什么是垃圾回收"></a><strong>什么是垃圾回收</strong></h2><p>垃圾回收（Garbage Collection，GC），顾名思义就是释放垃圾占用的空间，防止内存泄露。有效的使用可以使用的内存，对内存堆中已经死亡的或者长时间没有使用的对象进行清除和回收。</p>
+<p>Java 语言出来之前，大家都在拼命的写 C 或者 C++ 的程序，而此时存在一个很大的矛盾，C++ 等语言创建对象要不断的去开辟空间，不用的时候又需要不断的去释放控件，既要写构造函数，又要写析构函数，很多时候都在重复的 allocated，然后不停的析构。于是，有人就提出，能不能写一段程序实现这块功能，每次创建，释放控件的时候复用这段代码，而无需重复的书写呢？</p>
+<p>1960年，基于 MIT 的 Lisp 首先提出了垃圾回收的概念，用于处理C语言等不停的析构操作，而这时 Java 还没有出世呢！<strong>所以实际上 GC 并不是Java的专利，GC 的历史远远大于 Java 的历史！</strong></p>
+<h2 id="怎么定义垃圾"><a href="#怎么定义垃圾" class="headerlink" title="怎么定义垃圾"></a><strong>怎么定义垃圾</strong></h2><p>既然我们要做垃圾回收，首先我们得搞清楚垃圾的定义是什么，哪些内存是需要回收的。</p>
+<h3 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a><strong>引用计数算法</strong></h3><p>引用计数算法（Reachability Counting）是通过在对象头中分配一个空间来保存该对象被引用的次数（Reference Count）。如果该对象被其它对象引用，则它的引用计数加1，如果删除对该对象的引用，那么它的引用计数就减1，当该对象的引用计数为0时，那么该对象就会被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String m = <span class="keyword">new</span> String(<span class="string">&quot;jack&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>先创建一个字符串，这时候 <code>&quot;jack&quot;</code> 有一个引用，就是 m。<br><img data-src="/assets/picture/java-gc/1562835335078.png" alt="1562835335078"></p>
+<p>然后将 m 设置为 null，这时候 <code>&quot;jack&quot;</code> 的引用次数就等于0了，在引用计数算法中，意味着这块内容就需要被回收了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m = <span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/assets/picture/java-gc/1562835347155.png" alt="1562835347155"></p>
+<p>引用计数算法是将垃圾回收分摊到整个应用程序的运行当中了，而不是在进行垃圾收集时，要挂起整个应用的运行，直到对堆中所有对象的处理都结束。因此，采用引用计数的垃圾收集不属于严格意义上的<code>Stop-The-World</code>的垃圾收集机制。</p>
+<p>看似很美好，但我们知道 <code>JVM</code> 的垃圾回收就是 <code>Stop-The-World</code> 的，那是什么原因导致我们最终放弃了引用计数算法呢？看下面的例子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceCountingGC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Object instance;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReferenceCountingGC</span><span class="params">(String name)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testGC</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    ReferenceCountingGC a = <span class="keyword">new</span> ReferenceCountingGC(<span class="string">&quot;objA&quot;</span>);</span><br><span class="line">    ReferenceCountingGC b = <span class="keyword">new</span> ReferenceCountingGC(<span class="string">&quot;objB&quot;</span>);</span><br><span class="line"></span><br><span class="line">    a.instance = b;</span><br><span class="line">    b.instance = a;</span><br><span class="line"></span><br><span class="line">    a = <span class="keyword">null</span>;</span><br><span class="line">    b = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol>
+<li>定义2个对象</li>
+<li>相互引用</li>
+<li>置空各自的声明引用</li>
+</ol>
+</blockquote>
+<p><img data-src="/assets/picture/java-gc/1562835285237.png" alt="1562835285237"></p>
+<p>我们可以看到，最后这2个对象已经不可能再被访问了，但由于他们相互引用着对方，导致它们的引用计数永远都不会为0，通过引用计数算法，也就永远无法通知 GC 收集器回收它们。</p>
+<h3 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a><strong>可达性分析算法</strong></h3><p>可达性分析算法（Reachability Analysis）的基本思路是，通过一些被称为引用链（GC Roots）的对象作为起点，从这些节点开始向下搜索，搜索走过的路径被称为（Reference Chain)，当一个对象到 GC Roots 没有任何引用链相连时（即从 GC Roots 节点到该节点不可达），则证明该对象是不可用的。</p>
+<p><img data-src="/assets/picture/java-gc/1562835381956.png" alt="1562835381956"></p>
+<p>通过可达性算法，成功解决了引用计数所无法解决的问题-“循环依赖”，只要你无法与 GC Root 建立直接或间接的连接，系统就会判定你为可回收对象。那这样就引申出了另一个问题，什么是 GC Root 呢？</p>
+<h2 id="Java-内存区域"><a href="#Java-内存区域" class="headerlink" title="Java 内存区域"></a><strong>Java 内存区域</strong></h2><p>在 Java 语言中，可作为 GC Root 的对象包括以下4种：</p>
+<ul>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中 JNI（即一般说的 Native 方法）引用的对象</li>
+</ul>
+<p><img data-src="/assets/picture/java-gc/1562835845758.png" alt="1562835845758"></p>
+<h3 id="虚拟机栈（栈帧中的本地变量表）中引用的对象"><a href="#虚拟机栈（栈帧中的本地变量表）中引用的对象" class="headerlink" title="虚拟机栈（栈帧中的本地变量表）中引用的对象"></a><strong>虚拟机栈（栈帧中的本地变量表）中引用的对象</strong></h3><p>以下代码中的 <code>localParameter</code>，即为 GC Root，当 <code>localParameter</code> 置空时，<code>localParameter</code> 对象也断掉了与 GC Root 的引用链，将被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StackLocalParameter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StackLocalParameter</span><span class="params">(String name)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testGC</span><span class="params">()</span></span>&#123;</span><br><span class="line">    StackLocalParameter localParameter = <span class="keyword">new</span> StackLocalParameter(<span class="string">&quot;localParameter&quot;</span>);</span><br><span class="line">    localParameter = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法区中类静态属性引用的对象"><a href="#方法区中类静态属性引用的对象" class="headerlink" title="方法区中类静态属性引用的对象"></a><strong>方法区中类静态属性引用的对象</strong></h3><p>以下代码中 <code>properties</code> 为 GC Root，<code>properties</code> 置为 null，经过 GC 后，<code>properties</code> 所指向的 <code>MethodAreaStaicProperties</code> 对象由于无法与 GC Root 建立关系被回收。</p>
+<p>而 m 作为类的静态属性，也属于 GC Root，<code>parameter</code> 对象依然与 GC root 建立着连接，所以此时 <code>parameter</code> 对象并不会被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodAreaStaicProperties</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> MethodAreaStaicProperties m;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MethodAreaStaicProperties</span><span class="params">(String name)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testGC</span><span class="params">()</span></span>&#123;</span><br><span class="line">    MethodAreaStaicProperties properties = <span class="keyword">new</span> MethodAreaStaicProperties(<span class="string">&quot;properties&quot;</span>);</span><br><span class="line">    properties.m = <span class="keyword">new</span> MethodAreaStaicProperties(<span class="string">&quot;parameter&quot;</span>);</span><br><span class="line">    properties = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法区中常量引用的对象"><a href="#方法区中常量引用的对象" class="headerlink" title="方法区中常量引用的对象"></a><strong>方法区中常量引用的对象</strong></h3><p>以下代码中 <code>m</code> 即为方法区中的常量引用，也为 GC Root，<code>properties</code> 置为 null 后，final 对象也不会因没有与 GC Root 建立联系而被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodAreaStaicProperties</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> MethodAreaStaicProperties m = MethodAreaStaicProperties(<span class="string">&quot;final&quot;</span>);</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MethodAreaStaicProperties</span><span class="params">(String name)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testGC</span><span class="params">()</span></span>&#123;</span><br><span class="line">    MethodAreaStaicProperties properties = <span class="keyword">new</span> MethodAreaStaicProperties(<span class="string">&quot;staticProperties&quot;</span>);</span><br><span class="line">    properties = <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="本地方法栈中引用的对象"><a href="#本地方法栈中引用的对象" class="headerlink" title="本地方法栈中引用的对象"></a><strong>本地方法栈中引用的对象</strong></h3><p>任何 native 接口都会使用某种本地方法栈，实现的本地方法接口是使用 C 连接模型的话，那么它的本地方法栈就是 C 栈。当线程调用 Java 方法时，虚拟机会创建一个新的栈帧并压入 Java 栈。然而当它调用的是本地方法时，虚拟机会保持 Java 栈不变，不再在线程的 Java 栈中压入新的帧，虚拟机只是简单地动态连接并直接调用指定的本地方法。</p>
+<p><img data-src="/assets/picture/java-gc/1562835460475.png" alt="1562835460475"></p>
+<h2 id="怎么回收垃圾"><a href="#怎么回收垃圾" class="headerlink" title="怎么回收垃圾"></a><strong>怎么回收垃圾</strong></h2><p>在确定了哪些垃圾可以被回收后，垃圾收集器要做的事情就是开始进行垃圾回收，但是这里面涉及到一个问题是：如何高效地进行垃圾回收。由于Java虚拟机规范并没有对如何实现垃圾收集器做出明确的规定，因此各个厂商的虚拟机可以采用不同的方式来实现垃圾收集器，这里我们讨论几种常见的垃圾收集算法的核心思想。</p>
+<h3 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记 - 清除算法"></a><strong>标记 - 清除算法</strong></h3><p><img data-src="/assets/picture/java-gc/1562835512668.png" alt="1562835512668"></p>
+<p>标记清除算法（Mark-Sweep）是最基础的一种垃圾回收算法，它分为2部分，先把内存区域中的这些对象进行标记，哪些属于可回收标记出来，然后把这些垃圾拎出来清理掉。就像上图一样，清理掉的垃圾就变成未使用的内存区域，等待被再次使用。</p>
+<p>这逻辑再清晰不过了，并且也很好操作，但它存在一个很大的问题，那就是内存碎片。</p>
+<p>上图中等方块的假设是 2M，小一些的是 1M，大一些的是 4M。等我们回收完，内存就会切成了很多段。我们知道开辟内存空间时，需要的是连续的内存区域，这时候我们需要一个 2M的内存区域，其中有2个 1M 是没法用的。这样就导致，其实我们本身还有这么多的内存的，但却用不了。</p>
+<h3 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a><strong>复制算法</strong></h3><p><img data-src="/assets/picture/java-gc/1562835594986.png" alt="1562835594986"></p>
+<p>复制算法（Copying）是在标记清除算法上演化而来，解决标记清除算法的内存碎片问题。它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。保证了内存的连续可用，内存分配时也就不用考虑内存碎片等复杂情况，逻辑清晰，运行高效。</p>
+<p>上面的图很清楚，也很明显的暴露了另一个问题，合着我这140平的大三房，只能当70平米的小两房来使？代价实在太高。</p>
+<h3 id="标记整理算法"><a href="#标记整理算法" class="headerlink" title="标记整理算法"></a><strong>标记整理算法</strong></h3><p><img data-src="/assets/picture/java-gc/1562835613747.png" alt="1562835613747"></p>
+<p>标记整理算法（Mark-Compact）标记过程仍然与标记 — 清除算法一样，但后续步骤不是直接对可回收对象进行清理，而是让所有存活的对象都向一端移动，再清理掉端边界以外的内存区域。</p>
+<p>标记整理算法一方面在标记-清除算法上做了升级，解决了内存碎片的问题，也规避了复制算法只能利用一半内存区域的弊端。看起来很美好，但从上图可以看到，它对内存变动更频繁，需要整理所有存活对象的引用地址，在效率上比复制算法要差很多。</p>
+<p>分代收集算法分代收集算法（Generational Collection）严格来说并不是一种思想或理论，而是融合上述3种基础的算法思想，而产生的针对不同情况所采用不同算法的一套组合拳。对象存活周期的不同将内存划分为几块。一般是把 Java 堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用复制算法，只需要付出少量存活对象的复制成本就可以完成收集。而老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用标记-清理或者标记 — 整理算法来进行回收。so，另一个问题来了，那内存区域到底被分为哪几块，每一块又有什么特别适合什么算法呢？</p>
+<h2 id="内存模型与回收策略"><a href="#内存模型与回收策略" class="headerlink" title="内存模型与回收策略"></a><strong>内存模型与回收策略</strong></h2><p><img data-src="/assets/picture/java-gc/1562835637332.png" alt="1562835637332"></p>
+<p>Java 堆（Java Heap）是JVM所管理的内存中最大的一块，堆又是垃圾收集器管理的主要区域，这里我们主要分析一下 Java 堆的结构。</p>
+<p>Java 堆主要分为2个区域-年轻代与老年代，其中年轻代又分 Eden 区和 Survivor 区，其中 Survivor 区又分 From 和 To 2个区。可能这时候大家会有疑问，为什么需要 Survivor 区，为什么Survivor 还要分2个区。不着急，我们从头到尾，看看对象到底是怎么来的，而它又是怎么没的。</p>
+<h3 id="Eden-区"><a href="#Eden-区" class="headerlink" title="Eden 区"></a><strong>Eden 区</strong></h3><p>IBM 公司的专业研究表明，有将近98%的对象是朝生夕死，所以针对这一现状，大多数情况下，对象会在新生代 Eden 区中进行分配，当 Eden 区没有足够空间进行分配时，虚拟机会发起一次 Minor GC，Minor GC 相比 Major GC 更频繁，回收速度也更快。</p>
+<p>通过 Minor GC 之后，Eden 会被清空，Eden 区中绝大部分对象会被回收，而那些无需回收的存活对象，将会进到 Survivor 的 From 区（若 From 区不够，则直接进入 Old 区）。</p>
+<h3 id="Survivor-区"><a href="#Survivor-区" class="headerlink" title="Survivor 区"></a><strong>Survivor 区</strong></h3><p>Survivor 区相当于是 Eden 区和 Old 区的一个缓冲，类似于我们交通灯中的黄灯。Survivor 又分为2个区，一个是 From 区，一个是 To 区。每次执行 Minor GC，会将 Eden 区和 From 存活的对象放到 Survivor 的 To 区（如果 To 区不够，则直接进入 Old 区）。</p>
+<h4 id="为啥需要？"><a href="#为啥需要？" class="headerlink" title="为啥需要？"></a><strong>为啥需要？</strong></h4><p>不就是新生代到老年代么，直接 Eden 到 Old 不好了吗，为啥要这么复杂。想想如果没有 Survivor 区，Eden 区每进行一次 Minor GC，存活的对象就会被送到老年代，老年代很快就会被填满。而有很多对象虽然一次 Minor GC 没有消灭，但其实也并不会蹦跶多久，或许第二次，第三次就需要被清除。这时候移入老年区，很明显不是一个明智的决定。</p>
+<p>所以，Survivor 的存在意义就是减少被送到老年代的对象，进而减少 Major GC 的发生。Survivor 的预筛选保证，只有经历16次 Minor GC 还能在新生代中存活的对象，才会被送到老年代。</p>
+<h4 id="为啥需要俩？"><a href="#为啥需要俩？" class="headerlink" title="为啥需要俩？"></a><strong>为啥需要俩？</strong></h4><p>设置两个 Survivor 区最大的好处就是解决内存碎片化。</p>
+<p>我们先假设一下，Survivor 如果只有一个区域会怎样。Minor GC 执行后，Eden 区被清空了，存活的对象放到了 Survivor 区，而之前 Survivor 区中的对象，可能也有一些是需要被清除的。问题来了，这时候我们怎么清除它们？在这种场景下，我们只能标记清除，而我们知道标记清除最大的问题就是内存碎片，在新生代这种经常会消亡的区域，采用标记清除必然会让内存产生严重的碎片化。因为 Survivor 有2个区域，所以每次 Minor GC，会将之前 Eden 区和 From 区中的存活对象复制到 To 区域。第二次 Minor GC 时，From 与 To 职责兑换，这时候会将 Eden 区和 To 区中的存活对象再复制到 From 区域，以此反复。</p>
+<p>这种机制最大的好处就是，整个过程中，永远有一个 Survivor space 是空的，另一个非空的 Survivor space 是无碎片的。那么，Survivor 为什么不分更多块呢？比方说分成三个、四个、五个?显然，如果 Survivor 区再细分下去，每一块的空间就会比较小，容易导致 Survivor 区满，两块 Survivor 区可能是经过权衡之后的最佳方案。</p>
+<h3 id="Old-区"><a href="#Old-区" class="headerlink" title="Old 区"></a><strong>Old 区</strong></h3><p>老年代占据着2/3的堆内存空间，只有在 Major GC 的时候才会进行清理，每次 GC 都会触发“Stop-The-World”。内存越大，STW 的时间也越长，所以内存也不仅仅是越大就越好。由于复制算法在对象存活率较高的老年代会进行很多次的复制操作，效率很低，所以老年代这里采用的是标记 — 整理算法。</p>
+<p>除了上述所说，在内存担保机制下，无法安置的对象会直接进到老年代，以下几种情况也会进入老年代。</p>
+<h4 id="大对象"><a href="#大对象" class="headerlink" title="大对象"></a><strong>大对象</strong></h4><p>大对象指需要大量连续内存空间的对象，这部分对象不管是不是“朝生夕死”，都会直接进到老年代。这样做主要是为了避免在 Eden 区及2个 Survivor 区之间发生大量的内存复制。当你的系统有非常多“朝生夕死”的大对象时，得注意了。</p>
+<h4 id="长期存活对象"><a href="#长期存活对象" class="headerlink" title="长期存活对象"></a><strong>长期存活对象</strong></h4><p>虚拟机给每个对象定义了一个对象年龄（Age）计数器。正常情况下对象会不断的在 Survivor 的 From 区与 To 区之间移动，对象在 Survivor 区中没经历一次 Minor GC，年龄就增加1岁。当年龄增加到15岁时，这时候就会被转移到老年代。当然，这里的15，JVM 也支持进行特殊设置。</p>
+<h4 id="动态对象年龄"><a href="#动态对象年龄" class="headerlink" title="动态对象年龄"></a><strong>动态对象年龄</strong></h4><p>虚拟机并不重视要求对象年龄必须到15岁，才会放入老年区，如果 Survivor 空间中相同年龄所有对象大小的综合大于 Survivor 空间的一般，年龄大于等于该年龄的对象就可以直接进去老年区，无需等你“成年”。</p>
+<p>这其实有点类似于负载均衡，轮询是负载均衡的一种，保证每台机器都分得同样的请求。看似很均衡，但每台机的硬件不通，健康状况不同，我们还可以基于每台机接受的请求数，或每台机的响应时间等，来调整我们的负载均衡算法。</p>
+<blockquote>
+<p>转载自：阿里巴巴中间件</p>
+<p>标题：咱们从头到尾说一次 Java 垃圾回收</p>
+<p>原文链接：<span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvYUExZURZSVVIdUlmaWdUdzJmZm91dw==">https://mp.weixin.qq.com/s/aA1eDYIUHuIfigTw2ffouw<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/" title="咱们从头到尾说一次 Java 垃圾回收">https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/GC/" rel="tag"><i class="fa fa-tag"></i> GC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/17/maven/maven-publishing-to-center-repository/" rel="prev" title="如何发布 Jar 包到 Maven 中央仓库">
+                  <i class="fa fa-chevron-left"></i> 如何发布 Jar 包到 Maven 中央仓库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/07/18/database/oracle/oracle-index-invalidation/" rel="next" title="这么做会使 Oracle 索引失效">
+                  这么做会使 Oracle 索引失效 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">359k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:26</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":true,"custom_uv":false,"custom_pv":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>

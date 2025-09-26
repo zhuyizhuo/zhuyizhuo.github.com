@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="大规模的数据库存储系统中，数据的生命周期管理是很有必要的；从业务角度发现过期数据，数据归档和数据碎片整理等。以 MySQL 为例，1 个运行很久的 TB 级 MySQL 实例中，极有可能数百 GB 的数据，对业务来说是”过期数据”可直接归档后清理。如果不能发现和及时清理，这部分“过期数据”对生产数据库备份资源消耗，占用工作集数据内存 (过期数据行可能分散 InnoDB 的 page 中)，影响数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 的 “死键” 问题">
+<meta property="og:url" content="https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="大规模的数据库存储系统中，数据的生命周期管理是很有必要的；从业务角度发现过期数据，数据归档和数据碎片整理等。以 MySQL 为例，1 个运行很久的 TB 级 MySQL 实例中，极有可能数百 GB 的数据，对业务来说是”过期数据”可直接归档后清理。如果不能发现和及时清理，这部分“过期数据”对生产数据库备份资源消耗，占用工作集数据内存 (过期数据行可能分散 InnoDB 的 page 中)，影响数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-19T13:03:11.000Z">
+<meta property="article:modified_time" content="2025-09-26T09:36:22.843Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Repost">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/","path":"2019/07/19/redis/redis-unused-key/","title":"Redis 的 “死键” 问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 的 “死键” 问题 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E6%AD%BB%E9%94%AE%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">Redis 死键的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E8%BF%87%E6%9C%9F%E9%94%AE%E4%B8%8D%E8%83%BD%E5%8F%8A%E6%97%B6%E6%B8%85%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Redis 过期键不能及时清理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E5%AE%9A%E6%9C%9F%E5%88%A0%E9%99%A4%E7%9A%84%E9%80%9F%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">Redis 定期删除的速度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E8%BF%87%E6%9C%9F%E9%94%AE%E5%A0%86%E7%A7%AF%EF%BC%8C%E6%88%90%E4%B8%BA%E2%80%9D%E6%AD%BB%E9%94%AE%E2%80%9D"><span class="nav-number">3.1.</span> <span class="nav-text">如何避免过期键堆积，成为”死键”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%A0%E7%9A%84-Redis-%E6%9C%89%E5%A0%86%E7%A7%AF%E8%BF%87%E6%9C%9F%E9%94%AE%E5%90%97%EF%BC%9F"><span class="nav-number">3.2.</span> <span class="nav-text">你的 Redis 有堆积过期键吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E5%B7%B2%E4%B8%8D%E4%BD%BF%E7%94%A8%E7%9A%84%E9%94%AE"><span class="nav-number">3.3.</span> <span class="nav-text">应用程序已不使用的键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%94%AE%E7%9A%84-idletime"><span class="nav-number">3.4.</span> <span class="nav-text">获取键的 idletime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%94%AE%E7%A9%BA%E9%97%B4%E7%A9%BA%E9%97%B2%E6%97%B6%E9%97%B4%E8%B6%85%E8%BF%87%E6%8C%87%E5%AE%9A%E6%97%B6%E9%97%B4%E7%9A%84%E9%94%AE"><span class="nav-number">3.5.</span> <span class="nav-text">获取键空间空闲时间超过指定时间的键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%87%8F%E5%B0%91%E4%B8%9A%E5%8A%A1%E2%80%9D%E6%AD%BB%E9%94%AE%E2%80%9D%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-number">3.6.</span> <span class="nav-text">怎么减少业务”死键”的产生</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%B8%8B%E7%BA%BF%E7%9A%84%E8%BF%87%E6%9C%9F%E9%94%AE"><span class="nav-number">3.7.</span> <span class="nav-text">可下线的过期键</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 的 “死键” 问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-19 21:03:11" itemprop="dateCreated datePublished" datetime="2019-07-19T21:03:11+08:00">2019-07-19</time>
+    </span>
+
+  
+    <span id="/2019/07/19/redis/redis-unused-key/" class="post-meta-item leancloud_visitors" data-flag-title="Redis 的 “死键” 问题" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>大规模的数据库存储系统中，数据的生命周期管理是很有必要的；从业务角度发现过期数据，数据归档和数据碎片整理等。以 MySQL 为例，1 个运行很久的 TB 级 MySQL 实例中，极有可能数百 GB 的数据，对业务来说是”过期数据”可直接归档后清理。如果不能发现和及时清理，这部分“过期数据”对生产数据库备份资源消耗，占用工作集数据内存 (过期数据行可能分散 InnoDB 的 page 中)，影响数据还原的 RTO 等。从成本和运维的角度看，代价都是很大的。针对 MySQL 这类”过期数据”问题，通过 MySQL 巡检系统发现问题，使用 MySQL 归档系统备份和删除数据等。</p>
+</blockquote>
+<h2 id="Redis-死键的定义"><a href="#Redis-死键的定义" class="headerlink" title="Redis 死键的定义"></a>Redis 死键的定义</h2><p>本文简单聊下 Redis ”死键”的问题，从业务角度对”死键”的 2 个定义:</p>
+<ul>
+<li>设置有生存时间 Time to live:TTL 的键，已经过期”死亡”，但因 Redis 主动清理不及时，导致这类键堆积.(这里可能不清晰，后文会详解)</li>
+<li>未设置有 TTL 键，使用这批键的程序功能已下线，导致这类键在集群中堆积，无人管理；有的键长达 6 个月访问过一次。</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="Redis-过期键不能及时清理"><a href="#Redis-过期键不能及时清理" class="headerlink" title="Redis 过期键不能及时清理"></a>Redis 过期键不能及时清理</h2><p>Redis 可对键设置生存时间, 当键的生存时间为 0(过期键) 理论就会被删除，并释放占用的数据结构和内存资源。<br>但 Redis 为保证请求的性能，过期键并不是立即删除的。<br>这节主要讨论，当产生过期键的速度大于 Redis 删除过期键的速度时，导致过期键堆积的问题。</p>
+<p>Redis 删除过期键的策略</p>
+<p>Redis 删除过期键有两种策略：passive way 和 active way.</p>
+<ul>
+<li>passive way(惰性删除):当客户端访问到过期键时，发现它已过期，Redis 会主动删除它</li>
+<li>active way(定期删除):Redis 会定期调用删除过期键，调用频率由参数 hz 控制，默认每秒调用 10 次</li>
+</ul>
+<p>我们重点讨论第二种”定期删除策略”。Redis 每个 database(Cluster 模式下只有 0 号库) 都对应 expire 的 dict，用以保存 Redis 设置有生存时间的键；Redis 每秒调用 10 次 (hz 参数决定) activeExpireCycle 函数；</p>
+<p>每次随机获取 20 个带有生存时间的键。<br>删除其中已过期的键。<br>如果其中过期键超过 25%(即大于 5 个键是过期的),activeExpireCycle 函数会重新调用，开始第一步 (如果大量 KEY 同时过期，可能引起 Redis 性能抖动)。</p>
+<h2 id="Redis-定期删除的速度"><a href="#Redis-定期删除的速度" class="headerlink" title="Redis 定期删除的速度"></a>Redis 定期删除的速度</h2><p>Redis 定期删除过期键的速度？ 怎么监控它？</p>
+<p>Redis 定期删除动作每秒执行 10 次，正常情况每次删除几个过期键，这样每秒删除过期键约数十个。<br>通过 info stats 的 expired_keys 指标记录累计删除的过期键数量。根据生产监控 (hz=10)Redis 每秒删除过期键 20~25 个,每天能删除约 200 百万个过期键。有的 Redis 单个实例包含数千万个键，如果业务设计键过期处理不合理，每天产生过期键多于 200 百万。这容易导致 Redis 实例中存在过期键，最坏情况占整个键容量的 25%；也就说 Redis 实例最坏有 1/4 的内存被这类过期的”死键”所占据浪费。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Redis 查看过期键删除数量</span><br><span class="line">127.0.0.1:xxx&gt; info stats</span><br><span class="line"># Stats</span><br><span class="line">total_connections_received:33843364</span><br><span class="line">total_commands_processed:211474375292</span><br><span class="line">instantaneous_ops_per_sec:9438</span><br><span class="line">total_net_input_bytes:19661370696457</span><br><span class="line">total_net_output_bytes:34509115216581</span><br><span class="line">expired_keys:7575307675</span><br><span class="line">evicted_keys:0</span><br><span class="line">keyspace_hits:72743876832</span><br><span class="line">keyspace_misses:57604962586</span><br><span class="line">latest_fork_usec:95143</span><br></pre></td></tr></table></figure>
+
+<p>大量过期键堆积，最直接影响是浪费内存空间；另外还会有些”灵异现象”</p>
+<ul>
+<li>Master 的键个数比 Slave 多 20%</li>
+<li>读写分离时，应用程序读取 Slave 时能返回快过期的键</li>
+<li>Redis scan 或 keys 出来的键个数，远小于 dbsize 返回的个数</li>
+<li>高并发情况下，可能出现 performance 抖动,定期删除最坏可占 25%的 CPU 时间片<br>这些现象都和过期键的堆积有关。那么我们怎么避免这类过期键堆积呢。</li>
+</ul>
+<h3 id="如何避免过期键堆积，成为”死键”"><a href="#如何避免过期键堆积，成为”死键”" class="headerlink" title="如何避免过期键堆积，成为”死键”"></a>如何避免过期键堆积，成为”死键”</h3><p>有效避免 Redis 过期键堆积,从两个方面解决: 降低过期键产生的速度；和加快定期删除的速度。</p>
+<ul>
+<li>业务设计键的过期时长时，是否考虑过期键生成的速度；能否加大过期键的生存时间。<br>如天气缓存集群，大量的键要求 1 分钟过期，从产品需求角度，能否设置更大。</li>
+<li>尽量避免使用大实例，控制 Redis 单实例的键个数 (如 1kw)，可有效控制单个实例过期键产生的速度；拆分为更多的分片，加大集群定期删除的速度</li>
+<li>适当调大 hz 的值,增大每秒定期删除的次数；建议调整 60，官方建议小 100；<br>因调用 serverCron 除了过期删除动作外，还有很多其他操作，可能占用过多的 CPU 时间片，影响业务请求。<br>我们测试 hz 从默认 10 调整到 100 时，清理过期键的速度从 20 个升高到 140 个。</li>
+<li>主动触发 Redis”惰性删除策略”,通过 scan 命令扫描整个实例的键，Redis 会删除所有已过期的键。<br>如果通过业务优化，扩容实例和调整 hz 都不能解决，可考虑定期使用这个大招。</li>
+</ul>
+<blockquote>
+<p>以下是一个 shell, 获取当前服务器，Cluser 的 Master 通过 scan 方式清理过期键</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">local_ip=`ifconfig | grep -Eo &#x27;inet (addr:)?([0-9]*\.)&#123;3&#125;[0-9]*&#x27; | grep -Eo &#x27;([0-9]*\.)&#123;3&#125;[0-9]*&#x27; | grep -v &#x27;127.0.0.1&#x27;`</span><br><span class="line">redis-cli -p 6379 cluster nodes | grep &quot;master&quot; | grep &quot;$local_ip&quot; | while read node</span><br><span class="line">do</span><br><span class="line">  node_ins=`echo $node | awk &#x27;&#123;print $2&#125;&#x27; | cut -f 1 -d &quot;:&quot; `</span><br><span class="line">  node_port=`echo $node | awk &#x27;&#123;print $2&#125;&#x27; | cut -f 2 -d &quot;:&quot; `</span><br><span class="line">  redis-cli -h $node_ins -p $node_port --scan  &gt;&gt; /dev/null</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h3 id="你的-Redis-有堆积过期键吗？"><a href="#你的-Redis-有堆积过期键吗？" class="headerlink" title="你的 Redis 有堆积过期键吗？"></a>你的 Redis 有堆积过期键吗？</h3><p>业务低峰期，找个 Redis Master 实例，支持 scan 命令 (QPS 会增长 1w)，查看命令执行前后，dbsize/used_memory 是否有明显下降<br>redis-cli -h node_ins -p node_port –scan &gt;&gt; /dev/null</p>
+<h3 id="应用程序已不使用的键"><a href="#应用程序已不使用的键" class="headerlink" title="应用程序已不使用的键"></a>应用程序已不使用的键</h3><p>一个 Redis 集群，分析键空间发现 70%的键，3 个月未访问过。这类键没未设置生存时间，实例也不能设置淘汰机制。<br>很多应用程序功能已下线，但它使用的 Redis 键往往无人清理或通过 DBA 处理；这样的键从业务角度看，属于无用的”死键”。</p>
+<h3 id="获取键的-idletime"><a href="#获取键的-idletime" class="headerlink" title="获取键的 idletime"></a>获取键的 idletime</h3><p>每个 Redis 键都有一个 lru 的属性字段，用于记录它最后一次被访问的时间。<br>而 object idletime 命令，可通过系统当前时间-lru 时间，得到键多久没有被访问的秒数。<br>说明：object idletime 命令访问键时，不会改变键的 lru 属性，即不会影响键的访问时间</p>
+<blockquote>
+<p>以下示例，键”key:000000008149”已有150039秒未被访问过</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7000&gt; object idletime &quot;key:000000008149&quot;</span><br><span class="line"></span><br><span class="line">(integer) 150039</span><br><span class="line"></span><br><span class="line">127.0.0.1:7000&gt; object idletime &quot;key:000000008149&quot;</span><br><span class="line"></span><br><span class="line">(integer) 150041</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取键空间空闲时间超过指定时间的键"><a href="#获取键空间空闲时间超过指定时间的键" class="headerlink" title="获取键空间空闲时间超过指定时间的键"></a>获取键空间空闲时间超过指定时间的键</h3><p>使用Python写个简单程序，scan指定数据库的键空间，打印idletime超过指定时阀值的键。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*- coding:utf8 -*</span></span><br><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">//Action: scan <span class="number">0</span>号数据库的键空间，获取空闲时长大于指定时间的键的列表，达到获取业务死键的作用</span><br><span class="line">//日期: <span class="number">2016</span>-08-<span class="number">11</span></span><br><span class="line">TIME_THRESHOLD_SECOND = <span class="number">2592000</span>  <span class="comment"># 获取idletime时长超过TIME_THRESHOLD_SEC秒数键打印. 默认:30天</span></span><br><span class="line">COUNT = <span class="number">200</span>  <span class="comment">#scan每次返回的键个数,建议不要太大，避免O(n)的n过大出现慢查询. 默认:200个</span></span><br><span class="line">YEILD_SECOND = <span class="number">0.05</span> <span class="comment">#每次scan后，sleep 0.05秒；本地测试如果不sleep，此工具会增加约2w的QPS. 避免对高负载的Redis实例产生影响。</span></span><br><span class="line">            <span class="comment">#默认:0.05秒，增长约3500个QPS,其中一个时间复杂度是O(COUNT). 如果实例负载高，key不多可以考虑sleep 0.1秒</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_key_idletime</span>():</span></span><br><span class="line">    r = redis.StrictRedis(host=<span class="string">&#x27;127.0.0.1&#x27;</span>, port=<span class="number">6380</span>, password=<span class="string">&quot;xxxx&quot;</span> ,db=<span class="number">0</span>)</span><br><span class="line">    cursor = <span class="string">&#x27;0&#x27;</span></span><br><span class="line">        <span class="keyword">while</span> cursor != <span class="number">0</span>:</span><br><span class="line">            cursor, data = r.scan(cursor=cursor, count=COUNT)</span><br><span class="line">            <span class="keyword">for</span> key <span class="keyword">in</span> data:</span><br><span class="line">                  key_idletime = r.<span class="built_in">object</span>(<span class="string">&quot;idletime&quot;</span>,key)</span><br><span class="line">            <span class="keyword">if</span> key_idletime &gt; TIME_THRESHOLD_SECOND:</span><br><span class="line">                <span class="built_in">print</span> key , <span class="string">&quot; &quot;</span>, key_idletime</span><br><span class="line">            time.sleep(YEILD_SECOND)</span><br><span class="line">get_key_idletime()</span><br></pre></td></tr></table></figure>
+
+<p>我们定位Redis的长期未被访问的键，我们怎么确认属于哪个业务功能呢？ 怎么预防业务的“死键”存在？</p>
+<h3 id="怎么减少业务”死键”的产生"><a href="#怎么减少业务”死键”的产生" class="headerlink" title="怎么减少业务”死键”的产生"></a>怎么减少业务”死键”的产生</h3><ul>
+<li><p>通过3.1中定期巡检，自动发现1个月未访问过的键，并自动通知业务确认</p>
+</li>
+<li><p>设置合理的命名空间，我们建议三段式,用”:”分隔。每个集群固定前缀:每个业务功能前缀:实际键名(前缀尽量短，建议2个字节，减少内存消耗)。</p>
+<p>每个团队按大业务功能有多个集群，每个集群有多个小功能模块；这样命空间管理后，集群有任何问题，DBA定位导致问题的”键前缀”，通过集群对接负责的工程师<br>很快就定位是哪个功能，什么情况引起的问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">| 前缀   | 业务功能       | 存储内容            | 存储规模 | 生存时间 | 预计容量 |</span><br><span class="line">| ap:1: | 应用商场xxx功能 | 用户安装的appid列表 | x亿      | xx小时   | xxGB    |</span><br></pre></td></tr></table></figure></li>
+<li><p>给键设置合理的生存时间; 有效避免业务死键发生。比如用户session, 用户最近x小时已安装APP列表等业务场景。有存储性质的集群，也可要求设置合理过期时间，如几个月。通过info Keyspace命令，可查看当前实例有多少键设置有生存时间属性。(另外设置过期时间，每个键多消耗约32Bytes)</p>
+</li>
+</ul>
+<h3 id="可下线的过期键"><a href="#可下线的过期键" class="headerlink" title="可下线的过期键"></a>可下线的过期键</h3><p>数据备份<br>数据清理</p>
+<blockquote>
+<p>原文链接：<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXhpYW83MjM4NDYvYXJ0aWNsZS9kZXRhaWxzLzc4MDg5NTc3">https://blog.csdn.net/liuxiao723846/article/details/78089577<i class="fa fa-external-link-alt"></i></span></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/" title="Redis 的 “死键” 问题">https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Repost/" rel="tag"><i class="fa fa-tag"></i> Repost</a>
+              <a href="/tags/Redis/" rel="tag"><i class="fa fa-tag"></i> Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/07/18/database/oracle/oracle-index-invalidation/" rel="prev" title="这么做会使 Oracle 索引失效">
+                  <i class="fa fa-chevron-left"></i> 这么做会使 Oracle 索引失效
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/08/02/java/java-object-header/" rel="next" title="Java 对象头">
+                  Java 对象头 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">359k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:26</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"AWYESEbou6tCGQivun349qMS-gzGzoHsz","app_key":"39iQA2ICeAJJdL8qkQCUUeKk","server_url":null,"security":true,"custom_uv":false,"custom_pv":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://blog.zhuyizhuo.online/2019/07/19/redis/redis-unused-key/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>
