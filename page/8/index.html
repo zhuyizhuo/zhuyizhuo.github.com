@@ -162,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -239,6 +239,101 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2019/07/11/java/java-gc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/07/11/java/java-gc/" class="post-title-link" itemprop="url">咱们从头到尾说一次 Java 垃圾回收</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-11 00:00:00" itemprop="dateCreated datePublished" datetime="2019-07-11T00:00:00+08:00">2019-07-11</time>
+    </span>
+
+  
+    <span id="/2019/07/11/java/java-gc/" class="post-meta-item leancloud_visitors" data-flag-title="咱们从头到尾说一次 Java 垃圾回收" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
+          <p><img data-src="/assets/picture/java-gc/1562835150704.png" alt="1562835150704"></p>
+<p>之前上学的时候有这个一个梗，说在食堂里吃饭，吃完把餐盘端走清理的，是 C++ 程序员，吃完直接就走的，是 Java 程序员。</p>
+<p>确实，在 Java 的世界里，似乎我们不用对垃圾回收那么的专注，很多初学者不懂 GC，也依然能写出一个能用甚至还不错的程序或系统。但其实这并不代表 Java 的 GC 就不重要。相反，它是那么的重要和复杂，以至于出了问题，那些初学者除了打开 GC 日志，看着一堆 0101 的天文，啥也做不了。</p>
+<p>今天我们就从头到尾完整地聊一聊 Java 的垃圾回收。</p>
+        
+          <div class="post-button">
+            <a class="btn" href="/2019/07/11/java/java-gc/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2019/06/17/maven/maven-publishing-to-center-repository/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -297,6 +392,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>本文将介绍如何把自己开发出来的 <code>jar</code> 包发布到  <span class="exturl" data-url="aHR0cDovL3NlYXJjaC5tYXZlbi5vcmcv">Maven 中央仓库<i class="fa fa-external-link-alt"></i></span>，以便将好用的工具共享给其他需要的人.</p>
 <h5 id="第一步-注册-jira-账号，将-jira-账号名密码-配置到-maven-的-settings-xml-文件中"><a href="#第一步-注册-jira-账号，将-jira-账号名密码-配置到-maven-的-settings-xml-文件中" class="headerlink" title="第一步 注册 jira 账号，将 jira 账号名密码 配置到 maven 的 settings.xml 文件中"></a>第一步 注册 jira 账号，将 jira 账号名密码 配置到 maven 的 settings.xml 文件中</h5><p><span class="exturl" data-url="aHR0cHM6Ly9pc3N1ZXMuc29uYXR5cGUub3JnL3NlY3VyZS9TaWdudXAhZGVmYXVsdC5qc3Bh">JIRA 注册地址<i class="fa fa-external-link-alt"></i></span></p>
 <blockquote>
@@ -308,14 +404,13 @@
 <p>构件第一次发布需要创建 ISSUE，可以参考我之前创建的 <span class="exturl" data-url="aHR0cHM6Ly9pc3N1ZXMuc29uYXR5cGUub3JnL2Jyb3dzZS9PU1NSSC00MTcxOQ==">ISSUE<i class="fa fa-external-link-alt"></i></span></p>
 </blockquote>
 <p>登录 <code>JIRA</code>，点击 <code>Create</code> ，如图：<br><img data-src="/assets/picture/maven-publish/jira-create-issue.png" alt="1560743125851"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/06/17/maven/maven-publishing-to-center-repository/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2019/06/17/maven/maven-publishing-to-center-repository/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -399,18 +494,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p><code>Maven</code> 可以根据已有的项目模板来快速构建项目，避免重复的搭建相同的项目开发环境。</p>
 <p>首先确保本地正确安装了 <code>JDK</code> 及 <code>Maven</code> </p>
 <h5 id="自定义-archetype"><a href="#自定义-archetype" class="headerlink" title="自定义 archetype"></a>自定义 <code>archetype</code></h5><p>1、首先需要创建一个 <code>Maven</code> 项目，或者使用现有 <code>Maven</code> 项目，在项目根目录下执行以下命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn archetype:create-from-project</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/31/maven/maven-archetype/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2019/05/31/maven/maven-archetype/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -494,16 +589,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>作为一个开发者，通常会拥有公司与 github/gitlab 等多个账户，在不同项目下开发时，commit 的用户名和邮箱是不同的，例如公司项目中，使用的是本名+公司邮箱，而 github 项目中使用的是个人邮箱和昵称。</p>
 <p>首先，我们需要了解一下 Git 配置文件生效的优先级。对于一个 Git 仓库来说，配置优先级为 仓库 &gt; 全局 &gt; 系统。操作 Git 时，首先会查找<code>/etc/gitconfig</code> (系统)，然后查找用户的全局配置<code>~/.gitconfig</code>，最后查找每个仓库的 <code>.git/config</code> 配置。所有的配置项，从低优先级开始加载，出现冲突时，较高优先级的配置项会覆盖前面的配置。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/08/03/git/different-directories-use-different-user-names/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2018/08/03/git/different-directories-use-different-user-names/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -587,6 +682,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <blockquote>
 <p>一般来说，下图这些命令已经足够日常使用。但是有些时候，我们还需要使用其它的一些不太常用的命令。</p>
 </blockquote>
@@ -594,14 +690,13 @@
 <blockquote>
 <p>下面是我整理的常用 Git 命令。</p>
 </blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/08/01/git/git-command/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2018/08/01/git/git-command/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -685,6 +780,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="版本号命名规则"><a href="#版本号命名规则" class="headerlink" title="版本号命名规则"></a>版本号命名规则</h2><blockquote>
 <p>本文根据 Semantic Versionning 2.0.0 和 Semantic Versioning 3.0.0 选择性的整理出版本号命名规则指南。</p>
 </blockquote>
@@ -694,14 +790,13 @@
 <blockquote>
 <p>注意：版本一经发布，不得修改其内容，任何修改必须在新版本发布！</p>
 </blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/07/27/java/semantic-versionning/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2018/07/27/java/semantic-versionning/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -785,17 +880,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>生命有限，一个人不能经历太多太远太复杂，但读一部名著却可以让人犹如走过一次生命的轮回，其最深的滋味也往往在开始和结束处。尤其是开场白，它们或将人深深吸引，或令人陷入深思，使读者欲罢不能，往往成为整部著作的神韵所在。</p>
 <ol>
 <li>《三国演义》明·罗贯中<br>滚滚长江东逝水，浪花淘尽英雄。是非成败转头空。青山依旧在，几度夕阳红。 白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢。古今多少事，都付笑谈中。<br>——调寄《临江仙》斋<br>话说天下大势，分久必合，合久必分。周末七国分争，并入于秦。及秦灭之后，楚、汉分争，又并入于汉。汉朝自高祖斩白蛇而起义，一统天下，后来光武中兴，传至献帝，遂分为三国。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/06/13/book/opening-remarks-of-30-literary-masterpieces/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2018/06/13/book/opening-remarks-of-30-literary-masterpieces/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -879,6 +974,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="1-ASCII-返回与指定的字符对应的十进制数"><a href="#1-ASCII-返回与指定的字符对应的十进制数" class="headerlink" title="1.ASCII 返回与指定的字符对应的十进制数;"></a>1.ASCII 返回与指定的字符对应的十进制数;</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; select ascii(&#x27;A&#x27;) A,ascii(&#x27;a&#x27;) a,ascii(&#x27;0&#x27;) zero,ascii(&#x27; &#x27;) space from dual;</span><br><span class="line"></span><br><span class="line">A          A      ZERO     SPACE</span><br><span class="line">--------- --------- --------- ---------</span><br><span class="line">65         97        48        32</span><br></pre></td></tr></table></figure>
 
 
@@ -890,102 +986,13 @@
 ----------------
 010-88888888转23
 </code></pre>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/12/02/database/oracle/oracle-build-in-function/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2016/10/21/java/web-xml/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/img/avatar.png">
-      <meta itemprop="name" content="一卓">
-      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一卓的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/10/21/java/web-xml/" class="post-title-link" itemprop="url">web.xml 头</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2016-10-21 00:00:00" itemprop="dateCreated datePublished" datetime="2016-10-21T00:00:00+08:00">2016-10-21</time>
-    </span>
-
-  
-    <span id="/2016/10/21/java/web-xml/" class="post-meta-item leancloud_visitors" data-flag-title="web.xml 头" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>以前记录的笔记，当年还是需要拷贝 xml 文件的时代。留做纪念。</p>
-<p><code>web.xml</code> 头</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/j2ee&quot;</span> <span class="attr">xmlns:javaee</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:web</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">version</span>=<span class="string">&quot;2.4&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span> <span class="attr">xmlns:web</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">id</span>=<span class="string">&quot;WebApp_ID&quot;</span> <span class="attr">version</span>=<span class="string">&quot;2.5&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">id</span>=<span class="string">&quot;WebApp_ID&quot;</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
+          <div class="post-button">
+            <a class="btn" href="/2016/12/02/database/oracle/oracle-build-in-function/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -1030,13 +1037,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">359k</span>
+    <span title="站点总字数">361k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:26</span>
+    <span title="站点阅读时长">5:28</span>
   </span>
 </div>
   <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动

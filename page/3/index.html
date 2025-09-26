@@ -162,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -297,6 +297,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>在讲解 Mysql 的隔离级别与事务之前，先要了解一下概念：什么是 脏读、幻读、不可重复读？</p>
 <p>假如有表 User 中数据如下</p>
 <table>
@@ -321,14 +322,13 @@
 <td>女</td>
 </tr>
 </tbody></table>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/17/database/mysql/mysql-isolation-level-and-transaction/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/02/17/database/mysql/mysql-isolation-level-and-transaction/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -412,16 +412,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>大O表示法是最常用的表示算法时间复杂度的表示法。</p>
 <p>本篇博客我们将推导各种算法的大O表示法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/10/algorithm/derivation-of-algorithm-time-complexity/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/10/algorithm/derivation-of-algorithm-time-complexity/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -505,6 +505,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><ul>
 <li><p>按位与（&amp;）  都1则1</p>
 <ul>
@@ -527,14 +528,13 @@
 </ul>
 </li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/09/java/bit-operation/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/09/java/bit-operation/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -618,6 +618,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="什么是算法？"><a href="#什么是算法？" class="headerlink" title="什么是算法？"></a>什么是算法？</h2><p>在计算机科学中，每当我们要解决一些计算问题时，我们都会定义一组解决该问题需要遵循的步骤。这些步骤统称为算法。</p>
 <h2 id="如何区分算法的好坏？"><a href="#如何区分算法的好坏？" class="headerlink" title="如何区分算法的好坏？"></a>如何区分算法的好坏？</h2><p>针对特定问题可以有很多算法。那么，如何区分算法的好坏呢？</p>
 <p>让我们了解一个好的算法的属性：</p>
@@ -632,14 +633,13 @@
 </li>
 </ul>
 <p>因此，我们已经看到了可用于评估算法的三个因素。在这三个因素中，最重要的因素是算法的效率。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/07/algorithm/time-and-space-complexity-analysis-of-algorithm/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/07/algorithm/time-and-space-complexity-analysis-of-algorithm/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -723,18 +723,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>从 Java EE 5 规范开始，Servlet 中增加了两个影响 Servlet 生命周期的注解（Annotion）；@PostConstruct 和@PreDestroy。这两个注解被用来修饰一个非静态的 void() 方法 。写法有如下两种方式：</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostConstruct</span></span><br><span class="line"><span class="function">Public <span class="keyword">void</span> <span class="title">someMethod</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="meta">@PostConstruct</span> <span class="function"><span class="keyword">void</span> <span class="title">someMethod</span><span class="params">()</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>被@PostConstruct 修饰的方法会在服务器加载 Servle 的时候运行，并且只会被服务器执行一次。PostConstruct 在构造函数之后执行,init() 方法之前执行。PreDestroy（）方法在 destroy() 方法执行执行之后执行</p>
-</blockquote>
-
+        <!--noindex-->
+          
+          
+          
+            从 Java EE 5 规范开始，Servlet 中增加了两个影响 Servlet 生命周期的注解（Annotion）；@PostConstruct 和@PreDestroy。这两个注解被用来修饰一个非静态的 void() 方法 。写法有如下两种方式： 12@PostConstructPublic void someMethod() &#123;&#125; 或者 1public @PostCon...
+          
+          <div class="post-button">
+            <a class="btn" href="/2021/01/05/java/annotation/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -818,6 +818,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>今天把以前记录的 Cron 表达式的笔记整理为博客。</p>
 <h2 id="Cron-表达式-由七个字段组成："><a href="#Cron-表达式-由七个字段组成：" class="headerlink" title="Cron 表达式,由七个字段组成："></a>Cron 表达式,由七个字段组成：</h2><ul>
 <li>Seconds</li>
@@ -828,14 +829,13 @@
 <li>Day-of-Week</li>
 <li>Year (Optional field)</li>
 </ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/05/java/cron/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/05/java/cron/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -919,6 +919,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>本文使用简单的例子来说明 Predicate 的用法。</p>
 <p>本文示例使用 Stream Api :</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Stream&lt;T&gt; <span class="title">filter</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</span><br></pre></td></tr></table></figure>
@@ -927,14 +928,13 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; names = Arrays.asList(<span class="string">&quot;Jack&quot;</span>, <span class="string">&quot;Tom&quot;</span>, <span class="string">&quot;James&quot;</span>, <span class="string">&quot;Dwight Howard&quot;</span>);</span><br></pre></td></tr></table></figure>
 
 <h3 id="单条件过滤："><a href="#单条件过滤：" class="headerlink" title="单条件过滤："></a>单条件过滤：</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">listFilter</span><span class="params">(List&lt;String&gt; names)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; result = names.stream()</span><br><span class="line">                <span class="comment">// 此处实际使用 Predicate</span></span><br><span class="line">                .filter(name -&gt; name.startsWith(<span class="string">&quot;J&quot;</span>))</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        System.out.println(<span class="string">&quot;listFilter startsWith J :&quot;</span> + result);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/04/java/base-Predicate/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/04/java/base-Predicate/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -1018,18 +1018,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="Oracle-12C-新特性——CDB-与-PDB"><a href="#Oracle-12C-新特性——CDB-与-PDB" class="headerlink" title="Oracle 12C 新特性——CDB 与 PDB"></a>Oracle 12C 新特性——CDB 与 PDB</h3><blockquote>
 <p>Oracle 12C 引入了 CDB 与 PDB 的新特性，在 ORACLE 12C 数据库引入的多租用户环境（Multitenant Environment）中，允许一个数据库容器（CDB）承载多个可插拔数据库（PDB）。CDB 全称为 Container Database，中文翻译为数据库容器，PDB 全称为 Pluggable Database，即可插拔数据库。在 ORACLE 12C 之前，实例与数据库是一对一或多对一关系（RAC）：即一个实例只能与一个数据库相关联，数据库可以被多个实例所加载。而实例与数据库不可能是一对多的关系。当进入 ORACLE 12C 后，实例与数据库可以是一对多的关系。</p>
 </blockquote>
 <p>在阅读本文之前，需要先注册 Docker hub 账号。因为 Oracle 12c 的官方镜像需要登陆 Docker hub。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/01/database/oracle/docker-oracle-12c-config/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2021/01/01/database/oracle/docker-oracle-12c-config/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -1074,13 +1074,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">359k</span>
+    <span title="站点总字数">361k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:26</span>
+    <span title="站点阅读时长">5:28</span>
   </span>
 </div>
   <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动

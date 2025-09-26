@@ -162,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -239,6 +239,104 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2020/07/18/java/how-should-the-code-be-layered/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/07/18/java/how-should-the-code-be-layered/" class="post-title-link" itemprop="url">好的代码应如何分层?</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-18 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-18T00:00:00+08:00">2020-07-18</time>
+    </span>
+
+  
+    <span id="/2020/07/18/java/how-should-the-code-be-layered/" class="post-meta-item leancloud_visitors" data-flag-title="好的代码应如何分层?" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
+          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在项目的开发中，代码分层经常简单划分为 <code>Controller</code>、<code>Service</code>、<code>Mapper</code>三层，但是并没有把职责边界划分清晰。经常会出现以下情况：</p>
+<ul>
+<li><code>Controller</code> 层出现业务逻辑。</li>
+<li><code>Service</code> 层大而笨重，甚至有可能在 <code>Service</code> 层出现 <code>Mapper</code> 层应关心的 <code>Sql</code> 拼接等问题。</li>
+</ul>
+<p>这样往往造成代码无法复用，并且各分层的职责边界不清晰，后续代码维护起来会非常麻烦。</p>
+<p>在真正的团队开发中，每个人的习惯、代码风格都不同，写出来的代码必然带着自己的标签，后续其他人维护的时候，是按着自己的习惯修改还是遵循编码者的风格，又是个艰难的选择，如果都随心所欲，长久以此势必造成代码晦涩难懂，难以维护。</p>
+        
+          <div class="post-button">
+            <a class="btn" href="/2020/07/18/java/how-should-the-code-be-layered/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2020/07/16/tool/japidocs/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -297,17 +395,17 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p>今天分享一个生成静态文档的工具 <code>JApiDocs</code>。</p>
 <p>首先看一下生成效果</p>
 <p><img data-src="/assets/picture/japidocs/japidocs.png" alt="japidocs"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/16/tool/japidocs/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/07/16/tool/japidocs/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -391,20 +489,20 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="引言："><a href="#引言：" class="headerlink" title="引言："></a>引言：</h2><blockquote>
 <p>最近有个需求：后端所有数据的 ID 字段返回前段时均需要加密处理，前端传入后端需要解密处理，你会如何设计呢？</p>
 </blockquote>
 <p><strong>普通做法：</strong></p>
 <p>返回数据时直接调用工具类进行 ID 字符串的加密，前端传入数据后再调用工具类进行 ID 的解密</p>
 <p>这样做的问题是所有地方都需要进行加解密的处理，但是此操作和业务无关，不应该被感知，所以本文带大家来从框架层面解决这个问题。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/12/spring-boot/spring-boot-jackson/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/07/12/spring-boot/spring-boot-jackson/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -488,16 +586,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p><img data-src="https://zhuyizhuo.oss-cn-beijing.aliyuncs.com/image/1.jpeg" alt="photo"></p>
 <p>在 Spring Boot 项目中，提供了对 Liquibase 的内置支持。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/04/database/spring-boot-liquibase-database-version-control/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/07/04/database/spring-boot-liquibase-database-version-control/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -581,16 +679,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <p><img data-src="https://zhuyizhuo.oss-cn-beijing.aliyuncs.com/image/1.jpeg" alt="photo"></p>
 <p>在 Spring Boot 项目中，提供了对 Liquibase 的内置支持。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/04/spring-boot/spring-boot-liquibase-database-version-control/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/07/04/spring-boot/spring-boot-liquibase-database-version-control/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -674,15 +772,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h4 id="为什么要进行数据库版本控制？"><a href="#为什么要进行数据库版本控制？" class="headerlink" title="为什么要进行数据库版本控制？"></a>为什么要进行数据库版本控制？</h4><p>假设我们有一个名为 <em>Shiny</em> 的项目，其主要交付项目是一个名为 <em>Shiny Soft</em> 的软件，该软件连接到名为 <em>Shiny DB</em> 的数据库。<br>最简单的图可能看起来像这样：<br><img data-src="%5Cassets/picture/spring-boot-flyway-database-version-control/SimpleView.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/21/database/spring-boot-flyway-database-version-control/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/06/21/database/spring-boot-flyway-database-version-control/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -766,15 +864,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h4 id="为什么要进行数据库版本控制？"><a href="#为什么要进行数据库版本控制？" class="headerlink" title="为什么要进行数据库版本控制？"></a>为什么要进行数据库版本控制？</h4><p>假设我们有一个名为 <em>Shiny</em> 的项目，其主要交付项目是一个名为 <em>Shiny Soft</em> 的软件，该软件连接到名为 <em>Shiny DB</em> 的数据库。<br>最简单的图可能看起来像这样：<br><img data-src="/assets/picture/spring-boot-flyway-database-version-control/SimpleView.png" alt="img"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/21/spring-boot/spring-boot-flyway-database-version-control/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
+          <div class="post-button">
+            <a class="btn" href="/2020/06/21/spring-boot/spring-boot-flyway-database-version-control/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -858,110 +956,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
+        <!--noindex-->
           <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>用 swagger2 来生成接口文档，让我们脱离了传统的手写文档的模式，它可以轻松的整合到 Spring Boot 中，用很少的代码就能生成一份漂亮的文档，同时让维护文档和修改代码整合为一体，可以让我们在修改代码逻辑的同时同步维护接口文档。另外 Swagger2 也提供了强大的页面测试功能来调试每个 RESTful API。具体效果如下图所示：</p>
 <p><img data-src="/assets/picture/spring-boot-swagger/swagger.png" alt="swagger"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/17/spring-boot/spring-boot-swagger/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://blog.zhuyizhuo.online/2020/06/16/git/gitmoji/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/img/avatar.png">
-      <meta itemprop="name" content="一卓">
-      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一卓的个人博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/16/git/gitmoji/" class="post-title-link" itemprop="url">Git 提交记录的图标代码大全</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-06-16 00:00:00" itemprop="dateCreated datePublished" datetime="2020-06-16T00:00:00+08:00">2020-06-16</time>
-    </span>
-
-  
-    <span id="/2020/06/16/git/gitmoji/" class="post-meta-item leancloud_visitors" data-flag-title="Git 提交记录的图标代码大全" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>在 Github 上我们经常看到提交记录里有各种图标，如 🎨⚡️🍎 等，是如何实现的呢?</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/06/16/git/gitmoji/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <div class="post-button">
+            <a class="btn" href="/2020/06/17/spring-boot/spring-boot-swagger/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        <!--/noindex-->
       
     </div>
 
@@ -1006,13 +1010,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">359k</span>
+    <span title="站点总字数">361k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:26</span>
+    <span title="站点阅读时长">5:28</span>
   </span>
 </div>
   <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
