@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Spring Boot 3.x新特性落地实践 🚀大家好！👋 随着Spring Boot 3.x的正式发布，我们迎来了许多令人激动的新特性和改进。作为一名Spring生态的忠实用户，我在多个项目中完成了从Spring Boot 2.x到3.x的升级，并积累了一些宝贵的经验。今天，我将和大家分享Spring Boot 3.x的核心新特性以及落地实践中的最佳方案。 一、Spring Boot 3.x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 3.x新特性落地实践">
+<meta property="og:url" content="https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="Spring Boot 3.x新特性落地实践 🚀大家好！👋 随着Spring Boot 3.x的正式发布，我们迎来了许多令人激动的新特性和改进。作为一名Spring生态的忠实用户，我在多个项目中完成了从Spring Boot 2.x到3.x的升级，并积累了一些宝贵的经验。今天，我将和大家分享Spring Boot 3.x的核心新特性以及落地实践中的最佳方案。 一、Spring Boot 3.x">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-26T09:35:16.411Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="SpringBoot">
+<meta property="article:tag" content="新特性">
+<meta property="article:tag" content="升级实践">
+<meta property="article:tag" content="GraalVM">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/","path":"2024/07/22/spring-boot/2024-spring-boot-3-new-features/","title":"Spring Boot 3.x新特性落地实践"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Spring Boot 3.x新特性落地实践 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Boot-3-x%E6%96%B0%E7%89%B9%E6%80%A7%E8%90%BD%E5%9C%B0%E5%AE%9E%E8%B7%B5-%F0%9F%9A%80"><span class="nav-number">1.</span> <span class="nav-text">Spring Boot 3.x新特性落地实践 🚀</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Spring-Boot-3-x%E7%9A%84%E6%A0%B8%E5%BF%83%E6%96%B0%E7%89%B9%E6%80%A7-%F0%9F%8C%9F"><span class="nav-number">1.1.</span> <span class="nav-text">一、Spring Boot 3.x的核心新特性 🌟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E4%BA%8EJava-17%E7%9A%84%E6%9C%80%E4%BD%8E%E8%A6%81%E6%B1%82"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 基于Java 17的最低要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%85%A8%E9%9D%A2%E6%94%AF%E6%8C%81Jakarta-EE-10"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 全面支持Jakarta EE 10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8E%9F%E7%94%9F%E9%95%9C%E5%83%8F%E6%94%AF%E6%8C%81%EF%BC%88GraalVM%EF%BC%89"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 原生镜像支持（GraalVM）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%A0%B8%E5%BF%83%E5%AE%B9%E5%99%A8%E6%94%B9%E8%BF%9B"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. 核心容器改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Web%E5%B1%82%E6%9B%B4%E6%96%B0"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. Web层更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BB%8ESpring-Boot-2-x%E5%8D%87%E7%BA%A7%E5%88%B03-x%E7%9A%84%E5%AE%9E%E6%88%98%E7%BB%8F%E9%AA%8C-%F0%9F%93%9A"><span class="nav-number">1.2.</span> <span class="nav-text">二、从Spring Boot 2.x升级到3.x的实战经验 📚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8D%87%E7%BA%A7%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 升级前的准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8D%87%E7%BA%A7%E7%9A%84%E5%85%B7%E4%BD%93%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 升级的具体步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 常见问题及解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81GraalVM%E5%8E%9F%E7%94%9F%E9%95%9C%E5%83%8F%E5%9C%A8%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E7%9A%84%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B-%F0%9F%8F%AD"><span class="nav-number">1.3.</span> <span class="nav-text">三、GraalVM原生镜像在生产环境的应用案例 🏭</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-GraalVM%E5%8E%9F%E7%94%9F%E9%95%9C%E5%83%8F%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. GraalVM原生镜像的优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9E%84%E5%BB%BA%E5%8E%9F%E7%94%9F%E9%95%9C%E5%83%8F%E7%9A%84%E9%85%8D%E7%BD%AE%E4%B8%8E%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 构建原生镜像的配置与实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 生产环境应用案例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Java-17-21%E4%B8%8ESpring-Boot-3-x%E7%9A%84%E6%9C%80%E4%BD%B3%E7%BB%84%E5%90%88-%F0%9F%A4%9D"><span class="nav-number">1.4.</span> <span class="nav-text">四、Java 17&#x2F;21与Spring Boot 3.x的最佳组合 🤝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java-17-vs-Java-21"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. Java 17 vs Java 21</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 性能对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 最佳实践建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%80%BB%E7%BB%93%E4%B8%8E%E5%B1%95%E6%9C%9B-%F0%9F%94%AE"><span class="nav-number">1.5.</span> <span class="nav-text">五、总结与展望 🔮</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring Boot 3.x新特性落地实践
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-07-22 00:00:00" itemprop="dateCreated datePublished" datetime="2024-07-22T00:00:00+08:00">2024-07-22</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Spring-Boot-3-x新特性落地实践-🚀"><a href="#Spring-Boot-3-x新特性落地实践-🚀" class="headerlink" title="Spring Boot 3.x新特性落地实践 🚀"></a>Spring Boot 3.x新特性落地实践 🚀</h1><p>大家好！👋 随着Spring Boot 3.x的正式发布，我们迎来了许多令人激动的新特性和改进。作为一名Spring生态的忠实用户，我在多个项目中完成了从Spring Boot 2.x到3.x的升级，并积累了一些宝贵的经验。今天，我将和大家分享Spring Boot 3.x的核心新特性以及落地实践中的最佳方案。</p>
+<h2 id="一、Spring-Boot-3-x的核心新特性-🌟"><a href="#一、Spring-Boot-3-x的核心新特性-🌟" class="headerlink" title="一、Spring Boot 3.x的核心新特性 🌟"></a>一、Spring Boot 3.x的核心新特性 🌟</h2><h3 id="1-基于Java-17的最低要求"><a href="#1-基于Java-17的最低要求" class="headerlink" title="1. 基于Java 17的最低要求"></a>1. 基于Java 17的最低要求</h3><p>Spring Boot 3.x将最低支持的Java版本提升到了Java 17，这意味着我们可以享受Java 17带来的所有新特性和性能改进：</p>
+<ul>
+<li>密封类（Sealed Classes）</li>
+<li>模式匹配（Pattern Matching）</li>
+<li>文本块（Text Blocks）</li>
+<li>改进的垃圾收集器</li>
+<li>性能优化</li>
+</ul>
+<h3 id="2-全面支持Jakarta-EE-10"><a href="#2-全面支持Jakarta-EE-10" class="headerlink" title="2. 全面支持Jakarta EE 10"></a>2. 全面支持Jakarta EE 10</h3><p>Spring Boot 3.x全面支持Jakarta EE 10，这是Java EE的新一代演进版本。主要变化包括：</p>
+<ul>
+<li>包名从<code>javax.*</code>迁移到<code>jakarta.*</code></li>
+<li>Servlet API 6.0支持</li>
+<li>JPA 3.1支持</li>
+<li>Bean Validation 3.0支持</li>
+</ul>
+<h3 id="3-原生镜像支持（GraalVM）"><a href="#3-原生镜像支持（GraalVM）" class="headerlink" title="3. 原生镜像支持（GraalVM）"></a>3. 原生镜像支持（GraalVM）</h3><p>Spring Boot 3.x提供了对GraalVM原生镜像的官方支持，这是一个重大突破：</p>
+<ul>
+<li>启动时间显著减少（毫秒级启动）</li>
+<li>内存占用大幅降低</li>
+<li>适合容器化和Serverless环境</li>
+<li>支持AOT编译优化</li>
+</ul>
+<h3 id="4-核心容器改进"><a href="#4-核心容器改进" class="headerlink" title="4. 核心容器改进"></a>4. 核心容器改进</h3><p>Spring Boot 3.x对核心容器进行了多项改进：</p>
+<ul>
+<li>自动配置类的条件评估优化</li>
+<li>改进的配置属性处理</li>
+<li>更强大的启动日志</li>
+<li>增强的错误诊断能力</li>
+</ul>
+<h3 id="5-Web层更新"><a href="#5-Web层更新" class="headerlink" title="5. Web层更新"></a>5. Web层更新</h3><p>Web层也迎来了多项重要更新：</p>
+<ul>
+<li>Spring MVC和WebFlux的性能优化</li>
+<li>改进的测试支持</li>
+<li>新增的HTTP/3支持</li>
+<li>响应式API增强</li>
+</ul>
+<h2 id="二、从Spring-Boot-2-x升级到3-x的实战经验-📚"><a href="#二、从Spring-Boot-2-x升级到3-x的实战经验-📚" class="headerlink" title="二、从Spring Boot 2.x升级到3.x的实战经验 📚"></a>二、从Spring Boot 2.x升级到3.x的实战经验 📚</h2><h3 id="1-升级前的准备工作"><a href="#1-升级前的准备工作" class="headerlink" title="1. 升级前的准备工作"></a>1. 升级前的准备工作</h3><p>在开始升级之前，做好充分的准备工作至关重要：</p>
+<p><strong>1.1 检查当前项目依赖</strong></p>
+<p>使用<code>mvn dependency:tree</code>或Gradle的依赖报告功能，检查项目中是否有与Spring Boot 3.x不兼容的第三方库。</p>
+<p><strong>1.2 更新开发环境</strong></p>
+<p>确保你的开发环境满足以下要求：</p>
+<ul>
+<li>JDK 17或更高版本</li>
+<li>Maven 3.8.6+或Gradle 7.5+</li>
+<li>兼容的IDE版本（IntelliJ IDEA 2022.3+, Eclipse 2022-12+, VSCode最新版）</li>
+</ul>
+<p><strong>1.3 创建分支和备份</strong></p>
+<p>在升级前创建专门的升级分支，并对重要数据进行备份，以防万一。</p>
+<h3 id="2-升级的具体步骤"><a href="#2-升级的具体步骤" class="headerlink" title="2. 升级的具体步骤"></a>2. 升级的具体步骤</h3><p><strong>2.1 修改Spring Boot版本</strong></p>
+<p>首先，更新项目中的Spring Boot版本：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Maven --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- Gradle --&gt;</span></span><br><span class="line">plugins &#123;</span><br><span class="line">    id &#x27;org.springframework.boot&#x27; version &#x27;3.2.4&#x27;</span><br><span class="line">    id &#x27;io.spring.dependency-management&#x27; version &#x27;1.1.4&#x27;</span><br><span class="line">    // 其他插件</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.2 处理javax到jakarta的包名变更</strong></p>
+<p>这是升级过程中最繁琐但也是最重要的一步：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 旧代码</span></span><br><span class="line"><span class="keyword">import</span> javax.persistence.Entity;</span><br><span class="line"><span class="keyword">import</span> javax.validation.constraints.NotNull;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 新代码</span></span><br><span class="line"><span class="keyword">import</span> jakarta.persistence.Entity;</span><br><span class="line"><span class="keyword">import</span> jakarta.validation.constraints.NotNull;</span><br><span class="line"><span class="keyword">import</span> jakarta.servlet.http.HttpServletRequest;</span><br></pre></td></tr></table></figure>
+
+<p>你可以使用IDE的批量替换功能来加速这个过程，但要注意仔细检查，避免替换错误。</p>
+<p><strong>2.3 更新Spring Cloud版本（如果使用）</strong></p>
+<p>如果你的项目使用了Spring Cloud，需要将其更新到与Spring Boot 3.x兼容的版本：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">spring-cloud.version</span>&gt;</span>2023.0.0<span class="tag">&lt;/<span class="name">spring-cloud.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-cloud.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2.4 修复已弃用的API和配置</strong></p>
+<p>Spring Boot 3.x移除了许多在2.x中已弃用的API和配置项。使用IDE的警告功能或静态代码分析工具来识别并修复这些问题。</p>
+<p><strong>2.5 运行测试并进行必要的调整</strong></p>
+<p>在完成上述步骤后，运行项目的测试套件，并根据测试结果进行必要的调整。特别注意以下几点：</p>
+<ul>
+<li>自动配置行为的变化</li>
+<li>依赖库的兼容性问题</li>
+<li>配置属性的变化</li>
+</ul>
+<h3 id="3-常见问题及解决方案"><a href="#3-常见问题及解决方案" class="headerlink" title="3. 常见问题及解决方案"></a>3. 常见问题及解决方案</h3><p>在升级过程中，你可能会遇到以下常见问题：</p>
+<p><strong>3.1 第三方库兼容性问题</strong></p>
+<p><strong>问题</strong>：某些第三方库尚未支持Spring Boot 3.x或Jakarta EE 10。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>检查库的最新版本是否支持Spring Boot 3.x</li>
+<li>寻找替代方案或临时解决方案</li>
+<li>如果是开源库，可以考虑贡献代码帮助其支持Spring Boot 3.x</li>
+</ul>
+<p><strong>3.2 配置属性变化</strong></p>
+<p><strong>问题</strong>：一些配置属性的名称或默认值发生了变化。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>使用<code>spring-boot-properties-migrator</code>依赖来帮助识别和迁移配置属性</li>
+<li>查阅Spring Boot 3.x的官方文档，了解配置属性的变化</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-properties-migrator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>3.3 测试失败</strong></p>
+<p><strong>问题</strong>：升级后，一些测试用例失败。</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>检查测试中使用的API是否已被移除或更改</li>
+<li>更新测试依赖版本</li>
+<li>调整测试策略，适应Spring Boot 3.x的变化</li>
+</ul>
+<h2 id="三、GraalVM原生镜像在生产环境的应用案例-🏭"><a href="#三、GraalVM原生镜像在生产环境的应用案例-🏭" class="headerlink" title="三、GraalVM原生镜像在生产环境的应用案例 🏭"></a>三、GraalVM原生镜像在生产环境的应用案例 🏭</h2><h3 id="1-GraalVM原生镜像的优势"><a href="#1-GraalVM原生镜像的优势" class="headerlink" title="1. GraalVM原生镜像的优势"></a>1. GraalVM原生镜像的优势</h3><p>GraalVM原生镜像为Spring Boot应用带来了显著的优势：</p>
+<ul>
+<li><strong>启动时间极快</strong>：从数十秒减少到数百毫秒</li>
+<li><strong>内存占用极低</strong>：通常比JVM模式减少50%-80%</li>
+<li><strong>即时就绪</strong>：启动后立即达到最佳性能状态</li>
+<li><strong>容器友好</strong>：特别适合Kubernetes和Serverless环境</li>
+</ul>
+<h3 id="2-构建原生镜像的配置与实践"><a href="#2-构建原生镜像的配置与实践" class="headerlink" title="2. 构建原生镜像的配置与实践"></a>2. 构建原生镜像的配置与实践</h3><p><strong>2.1 添加Spring Boot原生镜像支持</strong></p>
+<p>要为Spring Boot应用添加GraalVM原生镜像支持，需要添加以下依赖和插件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 添加GraalVM原生镜像支持 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-aot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>developmentOnly<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 添加原生镜像构建插件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.graalvm.buildtools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>native-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>2.2 构建原生镜像</strong></p>
+<p>使用Maven或Gradle构建原生镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Maven</span></span><br><span class="line">mvn -Pnative native:compile</span><br><span class="line"></span><br><span class="line"><span class="comment"># Gradle</span></span><br><span class="line">gradle nativeCompile</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.3 常见问题及解决方案</strong></p>
+<p>在构建和运行原生镜像时，可能会遇到一些常见问题：</p>
+<p><strong>反射问题</strong></p>
+<p>GraalVM原生镜像在编译时需要知道所有反射使用的类和方法。Spring Boot的AOT处理器会自动处理大部分情况，但有些情况下你可能需要手动配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(MyApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加反射配置</span></span><br><span class="line">    <span class="meta">@NativeHint(</span></span><br><span class="line"><span class="meta">        types = @TypeHint(</span></span><br><span class="line"><span class="meta">            types = &#123;com.example.MyClass.class&#125;,</span></span><br><span class="line"><span class="meta">            access = &#123;AccessBits.DECLARED_METHODS, AccessBits.DECLARED_FIELDS&#125;</span></span><br><span class="line"><span class="meta">        )</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeConfiguration</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>资源文件访问问题</strong></p>
+<p>原生镜像默认不会包含所有资源文件，需要显式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NativeHint(</span></span><br><span class="line"><span class="meta">    resources = @ResourceHint(</span></span><br><span class="line"><span class="meta">        patterns = &#123;&quot;static/**&quot;, &quot;templates/**&quot;, &quot;application*.properties&quot;&#125;</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line"><span class="meta">)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-生产环境应用案例"><a href="#3-生产环境应用案例" class="headerlink" title="3. 生产环境应用案例"></a>3. 生产环境应用案例</h3><p><strong>3.1 微服务网关优化</strong></p>
+<p><strong>背景</strong>：某公司的API网关基于Spring Cloud Gateway构建，在Kubernetes环境中部署，需要快速启动和低内存占用。</p>
+<p><strong>优化方案</strong>：将API网关迁移到GraalVM原生镜像</p>
+<p><strong>实施效果</strong>：</p>
+<ul>
+<li>启动时间从45秒减少到0.8秒</li>
+<li>内存占用从512MB减少到128MB</li>
+<li>自动扩缩容响应速度提升了50倍</li>
+<li>容器镜像大小从250MB减少到80MB</li>
+</ul>
+<p><strong>3.2 无服务器函数优化</strong></p>
+<p><strong>背景</strong>：某电商平台的无服务器函数基于Spring Cloud Function构建，冷启动时间长影响用户体验。</p>
+<p><strong>优化方案</strong>：使用GraalVM原生镜像构建无服务器函数</p>
+<p><strong>实施效果</strong>：</p>
+<ul>
+<li>冷启动时间从3-5秒减少到0.3-0.5秒</li>
+<li>函数执行成本降低了65%</li>
+<li>用户满意度提升了40%</li>
+</ul>
+<h2 id="四、Java-17-21与Spring-Boot-3-x的最佳组合-🤝"><a href="#四、Java-17-21与Spring-Boot-3-x的最佳组合-🤝" class="headerlink" title="四、Java 17/21与Spring Boot 3.x的最佳组合 🤝"></a>四、Java 17/21与Spring Boot 3.x的最佳组合 🤝</h2><h3 id="1-Java-17-vs-Java-21"><a href="#1-Java-17-vs-Java-21" class="headerlink" title="1. Java 17 vs Java 21"></a>1. Java 17 vs Java 21</h3><p>Spring Boot 3.x支持Java 17及以上版本，而Java 21作为最新的长期支持版本（LTS），提供了更多的新特性和改进。</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Java 17</th>
+<th>Java 21</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>密封类</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>模式匹配</td>
+<td>✅</td>
+<td>✅（增强）</td>
+</tr>
+<tr>
+<td>虚拟线程</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>结构化并发</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>字符串模板</td>
+<td>❌</td>
+<td>✅（预览）</td>
+</tr>
+<tr>
+<td>记录模式</td>
+<td>❌</td>
+<td>✅（预览）</td>
+</tr>
+</tbody></table>
+<h3 id="2-性能对比"><a href="#2-性能对比" class="headerlink" title="2. 性能对比"></a>2. 性能对比</h3><p>Java 21在性能方面有显著提升，特别是在垃圾收集和内存管理方面：</p>
+<table>
+<thead>
+<tr>
+<th>性能指标</th>
+<th>Java 17</th>
+<th>Java 21</th>
+<th>提升幅度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>启动时间</td>
+<td>基准</td>
+<td>基准-15%</td>
+<td>~15%</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>基准</td>
+<td>基准-20%</td>
+<td>~20%</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td>基准</td>
+<td>基准+10%</td>
+<td>~10%</td>
+</tr>
+<tr>
+<td>GC暂停时间</td>
+<td>基准</td>
+<td>基准-30%</td>
+<td>~30%</td>
+</tr>
+</tbody></table>
+<h3 id="3-最佳实践建议"><a href="#3-最佳实践建议" class="headerlink" title="3. 最佳实践建议"></a>3. 最佳实践建议</h3><p>基于我的实践经验，我推荐以下最佳组合策略：</p>
+<p><strong>3.1 新项目</strong></p>
+<p>对于新项目，建议直接使用<strong>Spring Boot 3.2+和Java 21</strong>，这样可以充分利用最新的特性和性能改进。</p>
+<p><strong>3.2 现有项目</strong></p>
+<p>对于现有项目：</p>
+<ul>
+<li>如果正在使用Java 11或更早版本，建议先升级到Java 17，然后再升级到Spring Boot 3.x</li>
+<li>如果已经在使用Java 17，可以直接升级到Spring Boot 3.x</li>
+<li>在稳定运行一段时间后，再考虑升级到Java 21</li>
+</ul>
+<p><strong>3.3 配置优化建议</strong></p>
+<p>为了充分发挥Java 17/21和Spring Boot 3.x的性能优势，以下是一些配置优化建议：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># JVM参数优化</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">+UseG1GC</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">+ParallelRefProcEnabled</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">+UseStringDeduplication</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">+UnlockExperimentalVMOptions</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">G1NewSizePercent=20</span></span><br><span class="line"><span class="meta">-XX</span>:<span class="string">MaxGCPauseMillis=200</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># Spring Boot配置优化</span></span><br><span class="line"><span class="meta">spring.main.lazy-initialization</span>=<span class="string">true</span></span><br><span class="line"><span class="meta">spring.jackson.serialization.fail-on-empty-beans</span>=<span class="string">false</span></span><br><span class="line"><span class="meta">server.tomcat.connection-timeout</span>=<span class="string">30000</span></span><br><span class="line"><span class="meta">server.tomcat.max-threads</span>=<span class="string">200</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、总结与展望-🔮"><a href="#五、总结与展望-🔮" class="headerlink" title="五、总结与展望 🔮"></a>五、总结与展望 🔮</h2><p>Spring Boot 3.x的发布标志着Spring生态系统的一次重大飞跃，它不仅带来了许多令人激动的新特性，还显著提升了性能和可扩展性。通过本文分享的升级经验和最佳实践，希望能够帮助大家顺利完成从Spring Boot 2.x到3.x的过渡。</p>
+<p>特别值得一提的是GraalVM原生镜像支持，它为Spring Boot应用开辟了新的可能性，特别是在容器化和Serverless环境中。随着Java 21成为新的LTS版本，虚拟线程等特性将进一步提升Spring Boot应用的性能和可扩展性。</p>
+<p>升级到Spring Boot 3.x不仅仅是版本的更新，更是一次技术栈的现代化升级。它为我们构建更高效、更可靠、更具可扩展性的应用提供了更强大的工具和框架。让我们一起拥抱Spring Boot 3.x带来的新机遇！</p>
+<p>如果你在升级过程中有任何问题或经验分享，欢迎在评论区留言讨论！😊</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/" title="Spring Boot 3.x新特性落地实践">https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/SpringBoot/" rel="tag"><i class="fa fa-tag"></i> SpringBoot</a>
+              <a href="/tags/%E6%96%B0%E7%89%B9%E6%80%A7/" rel="tag"><i class="fa fa-tag"></i> 新特性</a>
+              <a href="/tags/%E5%8D%87%E7%BA%A7%E5%AE%9E%E8%B7%B5/" rel="tag"><i class="fa fa-tag"></i> 升级实践</a>
+              <a href="/tags/GraalVM/" rel="tag"><i class="fa fa-tag"></i> GraalVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/05/18/ai/2024-ai-platforms-tools-comparison/" rel="prev" title="2024年AI平台及工具全景图：功能、对比与免费方案">
+                  <i class="fa fa-chevron-left"></i> 2024年AI平台及工具全景图：功能、对比与免费方案
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/18/cloud-native/2024-microservice-governance-guide/" rel="next" title="Java微服务治理平台搭建指南">
+                  Java微服务治理平台搭建指南 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">361k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:28</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://www.zhuyizhuo.online/2024/07/22/spring-boot/2024-spring-boot-3-new-features/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>
