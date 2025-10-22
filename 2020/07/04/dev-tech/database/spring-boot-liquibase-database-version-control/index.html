@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="在 Spring Boot 项目中，提供了对 Liquibase 的内置支持。  什么是数据库版本控制？为什么要进行数据库版本控制？可参考我上一篇文章 SpringBoot 集成数据库版本管理工具 Flyway。  Liquibase 通过在变更日志(Change Log)文件，配置每一个变更集(Change Set)，实现数据库变更的管理。 Liquibase 提供了多种格式，如下：  XML">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot 集成数据库版本管理工具 Liquibase">
+<meta property="og:url" content="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="在 Spring Boot 项目中，提供了对 Liquibase 的内置支持。  什么是数据库版本控制？为什么要进行数据库版本控制？可参考我上一篇文章 SpringBoot 集成数据库版本管理工具 Flyway。  Liquibase 通过在变更日志(Change Log)文件，配置每一个变更集(Change Set)，实现数据库变更的管理。 Liquibase 提供了多种格式，如下：  XML">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhuyizhuo.oss-cn-beijing.aliyuncs.com/image/1.jpeg">
+<meta property="og:image" content="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704203257673.png">
+<meta property="og:image" content="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704213047702.png">
+<meta property="og:image" content="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704213227760.png">
+<meta property="og:image" content="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704221143804.png">
+<meta property="article:published_time" content="2020-07-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-10-10T10:03:46.403Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="SpringBoot">
+<meta property="article:tag" content="Original">
+<meta property="article:tag" content="Database">
+<meta property="article:tag" content="Liquibase">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhuyizhuo.oss-cn-beijing.aliyuncs.com/image/1.jpeg">
+
+
+<link rel="canonical" href="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/","path":"2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/","title":"SpringBoot 集成数据库版本管理工具 Liquibase"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringBoot 集成数据库版本管理工具 Liquibase | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E9%A6%96%E5%85%88%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-Spring-Boot-%E9%A1%B9%E7%9B%AE%E3%80%82"><span class="nav-number">1.</span> <span class="nav-text">1. 首先创建一个 Spring Boot 项目。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-pom-xml-%E6%96%87%E4%BB%B6%E5%BC%95%E5%85%A5-Liquibase-%E4%BE%9D%E8%B5%96"><span class="nav-number">2.</span> <span class="nav-text">2.  pom.xml 文件引入 Liquibase 依赖</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE-application-yaml"><span class="nav-number">3.</span> <span class="nav-text">3. 配置 application.yaml</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E5%9F%BA%E4%BA%8E-SQL-%E7%9A%84%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">4. 基于 SQL 的版本控制</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9C%A8-resources-db-changelog%E7%9B%AE%E5%BD%95%E4%B8%8B%E5%88%9B%E5%BB%BA-db-changelog-yaml%E6%96%87%E4%BB%B6"><span class="nav-number">4.1.</span> <span class="nav-text">在 resources&#x2F;db&#x2F;changelog目录下创建 db_changelog.yaml文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-db-changelog-yaml-%E6%96%87%E4%BB%B6%EF%BC%8C%E5%A2%9E%E5%8A%A0-ID-1-%E7%9A%84%E5%8F%98%E6%9B%B4%E9%9B%86%E5%90%88-Change-Set-%EF%BC%8C%E5%A6%82%E4%B8%8B%EF%BC%9A"><span class="nav-number">4.2.</span> <span class="nav-text">修改 db_changelog.yaml 文件，增加 ID &#x3D; 1 的变更集合( Change Set ) ，如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E5%9F%BA%E4%BA%8E-Java-%E7%B1%BB%E7%9A%84%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">5. 基于 Java 类的版本控制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number"></span> <span class="nav-text">代码示例</span></a></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringBoot 集成数据库版本管理工具 Liquibase
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-04 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-04T00:00:00+08:00">2020-07-04</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img data-src="https://zhuyizhuo.oss-cn-beijing.aliyuncs.com/image/1.jpeg" alt="photo"></p>
+<p>在 Spring Boot 项目中，提供了对 Liquibase 的内置支持。</p>
+<blockquote>
+<p>什么是数据库版本控制？为什么要进行数据库版本控制？可参考我上一篇文章 <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5vbmxpbmUvMjAyMC8wNi8yMS9zcHJpbmctYm9vdC1mbHl3YXktZGF0YWJhc2UtdmVyc2lvbi1jb250cm9sLw==">SpringBoot 集成数据库版本管理工具 Flyway<i class="fa fa-external-link-alt"></i></span>。</p>
+</blockquote>
+<p>Liquibase 通过在变更日志(<span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL2RhdGFiYXNlY2hhbmdlbG9nLmh0bWw=">Change Log<i class="fa fa-external-link-alt"></i></span>)文件，配置每一个变更集(<span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL2NoYW5nZXNldC5odG1s">Change Set<i class="fa fa-external-link-alt"></i></span>)，实现数据库变更的管理。</p>
+<p>Liquibase 提供了多种格式，如下：</p>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL3htbF9mb3JtYXQuaHRtbA==">XML Format<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL3lhbWxfZm9ybWF0Lmh0bWw=">YAML Format<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL2pzb25fZm9ybWF0Lmh0bWw=">JSON Format<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL3NxbF9mb3JtYXQuaHRtbA==">SQL Format<i class="fa fa-external-link-alt"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly93d3cubGlxdWliYXNlLm9yZy9kb2N1bWVudGF0aW9uL290aGVyX2Zvcm1hdHMuaHRtbA==">Other Formats<i class="fa fa-external-link-alt"></i></span></li>
+</ul>
+<p>在 Spring Boot 中，默认配置使用 YAML Format 。所以我们在入门的示例中，也使用这种格式。</p>
+<p>下面，就让我们开始入门 Liquibase 吧。</p>
+<h5 id="1-首先创建一个-Spring-Boot-项目。"><a href="#1-首先创建一个-Spring-Boot-项目。" class="headerlink" title="1. 首先创建一个 Spring Boot 项目。"></a>1. 首先创建一个 Spring Boot 项目。</h5><h5 id="2-pom-xml-文件引入-Liquibase-依赖"><a href="#2-pom-xml-文件引入-Liquibase-依赖" class="headerlink" title="2.  pom.xml 文件引入 Liquibase 依赖"></a>2.  <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/pom.xml"><code>pom.xml</code></a> 文件引入 <code>Liquibase</code> 依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 实现对数据库连接池的自动化配置 --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 同时，spring-boot-starter-jdbc 支持 Liquibase 的自动化配置 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 使用 MySQL --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- Liquibase 依赖 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.liquibase<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>liquibase-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-配置-application-yaml"><a href="#3-配置-application-yaml" class="headerlink" title="3. 配置 application.yaml"></a>3. 配置 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/tree/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/application.yaml"><code>application.yaml</code></a></h5><p><a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/tree/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/application.yaml"><code>application.yaml</code></a> 配置如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># datasource 数据源配置内容，对应 DataSourceProperties 配置属性类</span></span><br><span class="line">  <span class="attr">datasource:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">jdbc:mysql://localhost:3306/github_demo?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Asia/Shanghai</span></span><br><span class="line">    <span class="attr">driver-class-name:</span> <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="comment"># 数据库账号</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">    <span class="comment"># 数据库密码</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">$&#123;MYSQL_PWD:123456&#125;</span></span><br><span class="line">  <span class="comment"># Liquibase 配置内容，对应 LiquibaseProperties 配置项</span></span><br><span class="line">  <span class="attr">liquibase:</span></span><br><span class="line">    <span class="comment"># 开启 Liquibase 功能。默认为 true 。</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="comment"># Liquibase 配置文件地址</span></span><br><span class="line">    <span class="attr">change-log:</span> <span class="string">classpath:/db/changelog/db_changelog.yaml</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">$&#123;spring.datasource.url&#125;</span></span><br><span class="line">    <span class="attr">user:</span> <span class="string">$&#123;spring.datasource.username&#125;</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">$&#123;spring.datasource.password&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-基于-SQL-的版本控制"><a href="#4-基于-SQL-的版本控制" class="headerlink" title="4. 基于 SQL 的版本控制"></a>4. 基于 SQL 的版本控制</h5><h6 id="在-resources-db-changelog目录下创建-db-changelog-yaml文件"><a href="#在-resources-db-changelog目录下创建-db-changelog-yaml文件" class="headerlink" title="在 resources/db/changelog目录下创建 db_changelog.yaml文件"></a>在 <code>resources/db/changelog</code>目录下创建 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/db_changelog.yaml"><code>db_changelog.yaml</code></a>文件</h6><p>修改 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/db_changelog.yaml"><code>db_changelog.yaml</code></a> 变更日志，增加 <code>ID = 0</code> 的变更集合( Change Set ) ，不执行任何 SQL 。代码如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">databaseChangeLog:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">changeSet:</span> <span class="comment"># 对应一个 ChangeSet 对象</span></span><br><span class="line">      <span class="attr">id:</span> <span class="number">0</span> <span class="comment"># ChangeSet 编号</span></span><br><span class="line">      <span class="attr">author:</span> <span class="string">yizhuo</span> <span class="comment"># 作者</span></span><br><span class="line">      <span class="attr">comments:</span> <span class="string">空</span> <span class="comment"># 备注</span></span><br></pre></td></tr></table></figure>
+
+<p>启动 Spring Boot 项目</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LiquibaseApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(LiquibaseApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行日志如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">2020-07-04 20:25:22.804  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 20:25:22.885  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : CREATE TABLE github_demo.DATABASECHANGELOGLOCK (ID INT NOT NULL, `LOCKED` BIT(1) NOT NULL, LOCKGRANTED datetime NULL, LOCKEDBY VARCHAR(255) NULL, CONSTRAINT PK_DATABASECHANGELOGLOCK PRIMARY KEY (ID))</span><br><span class="line">2020-07-04 20:25:23.017  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 20:25:23.037  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : DELETE FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 20:25:23.045  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : INSERT INTO github_demo.DATABASECHANGELOGLOCK (ID, `LOCKED`) VALUES (1, 0)</span><br><span class="line">2020-07-04 20:25:23.062  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT `LOCKED` FROM github_demo.DATABASECHANGELOGLOCK WHERE ID=1</span><br><span class="line">2020-07-04 20:25:23.095  INFO 70787 --- [           main] l.lockservice.StandardLockService        : Successfully acquired change log lock</span><br><span class="line">2020-07-04 20:25:24.929  INFO 70787 --- [           main] l.c.StandardChangeLogHistoryService      : Creating database history table with name: github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 20:25:24.930  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : CREATE TABLE github_demo.DATABASECHANGELOG (ID VARCHAR(255) NOT NULL, AUTHOR VARCHAR(255) NOT NULL, FILENAME VARCHAR(255) NOT NULL, DATEEXECUTED datetime NOT NULL, ORDEREXECUTED INT NOT NULL, EXECTYPE VARCHAR(10) NOT NULL, MD5SUM VARCHAR(35) NULL, `DESCRIPTION` VARCHAR(255) NULL, COMMENTS VARCHAR(255) NULL, TAG VARCHAR(255) NULL, LIQUIBASE VARCHAR(20) NULL, CONTEXTS VARCHAR(255) NULL, LABELS VARCHAR(255) NULL, DEPLOYMENT_ID VARCHAR(10) NULL)</span><br><span class="line">2020-07-04 20:25:25.007  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 20:25:25.012  INFO 70787 --- [           main] l.c.StandardChangeLogHistoryService      : Reading from github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 20:25:25.013  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT * FROM github_demo.DATABASECHANGELOG ORDER BY DATEEXECUTED ASC, ORDEREXECUTED ASC</span><br><span class="line">2020-07-04 20:25:25.019  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 20:25:25.048  INFO 70787 --- [           main] liquibase.changelog.ChangeSet            : ChangeSet classpath:/db/changelog/db_changelog.yaml::0::yizhuo ran successfully in 7ms</span><br><span class="line">2020-07-04 20:25:25.050  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MAX(ORDEREXECUTED) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 20:25:25.054  INFO 70787 --- [           main] liquibase.executor.jvm.JdbcExecutor      : INSERT INTO github_demo.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, `DESCRIPTION`, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES (&#x27;0&#x27;, &#x27;yizhuo&#x27;, &#x27;classpath:/db/changelog/db_changelog.yaml&#x27;, NOW(), 1, &#x27;8:d41d8cd98f00b204e9800998ecf8427e&#x27;, &#x27;empty&#x27;, &#x27;&#x27;, &#x27;EXECUTED&#x27;, NULL, NULL, &#x27;3.8.9&#x27;, &#x27;3865525034&#x27;)</span><br><span class="line">2020-07-04 20:25:25.101  INFO 70787 --- [           main] l.lockservice.StandardLockService        : Successfully released change log lock</span><br><span class="line">...</span><br><span class="line">2020-07-04 20:25:25.387  INFO 70787 --- [           main] c.g.z.liquibase.LiquibaseApplication     : Started LiquibaseApplication in 8.936 seconds (JVM running for 10.127)</span><br></pre></td></tr></table></figure>
+
+<p>在启动的日志中，我们看到 Liquibase 会自动创建两张表：</p>
+<p> <code>DATABASECHANGELOG</code> ：数据库变更日志。每一条记录，对应记录每个变更集合( Change Set ) 的执行日志。表结构如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `DATABASECHANGELOG` (</span><br><span class="line">  `ID` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- Change Set 编号</span></span><br><span class="line">  `AUTHOR` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 作者</span></span><br><span class="line">  `FILENAME` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- Change Log 文件路径</span></span><br><span class="line">  `DATEEXECUTED` datetime <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 执行时间</span></span><br><span class="line">  `ORDEREXECUTED` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 执行的顺序</span></span><br><span class="line">  `EXECTYPE` <span class="type">varchar</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 执行类型。枚举值有 EXECUTED/FAILED/SKIPPED/RERAN/MARK_RAN</span></span><br><span class="line">  `MD5SUM` <span class="type">varchar</span>(<span class="number">35</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- MD5 校验码</span></span><br><span class="line">  `DESCRIPTION` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- 描述</span></span><br><span class="line">  `COMMENTS` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- 备注</span></span><br><span class="line">  `TAG` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- Tag 标签</span></span><br><span class="line">  `LIQUIBASE` <span class="type">varchar</span>(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- LIQUIBASE 版本号</span></span><br><span class="line">  `CONTEXTS` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- 上下文</span></span><br><span class="line">  `LABELS` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- Label 标签</span></span><br><span class="line">  `DEPLOYMENT_ID` <span class="type">varchar</span>(<span class="number">10</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> <span class="comment">-- 部署编号</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<p> <code>DATABASECHANGELOGLOCK</code>：锁记录表，用于确保多个 JVM 进程同时只能有一个可以修改数据库。表结构如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `DATABASECHANGELOGLOCK` (</span><br><span class="line">  `ID` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 锁的编号。</span></span><br><span class="line">  `LOCKED` bit(<span class="number">1</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>, <span class="comment">-- 是否锁。1-锁，0-未锁</span></span><br><span class="line">  `LOCKGRANTED` datetime <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- 获得锁的时间</span></span><br><span class="line">  `LOCKEDBY` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>, <span class="comment">-- 锁定人</span></span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`ID`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<p>我们去查询一下 Mysql，如下：</p>
+<p><img data-src="%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704203257673.png" alt="image-20200704203257673"></p>
+<p>并且 <code>DATABASECHANGELOG</code> 表多了一条数据如下(部分字段截图)</p>
+<p><img data-src="%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704213047702.png" alt="image-20200704213047702"></p>
+<h6 id="修改-db-changelog-yaml-文件，增加-ID-1-的变更集合-Change-Set-，如下："><a href="#修改-db-changelog-yaml-文件，增加-ID-1-的变更集合-Change-Set-，如下：" class="headerlink" title="修改 db_changelog.yaml 文件，增加 ID = 1 的变更集合( Change Set ) ，如下："></a>修改 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/db_changelog.yaml"><code>db_changelog.yaml</code></a> 文件，增加 <code>ID = 1</code> 的变更集合( Change Set ) ，如下：</h6><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">changeSet:</span> <span class="comment"># 对应一个 ChangeSet 对象</span></span><br><span class="line">    <span class="attr">id:</span> <span class="number">1</span></span><br><span class="line">    <span class="attr">author:</span> <span class="string">yizhuo</span></span><br><span class="line">    <span class="attr">comments:</span> <span class="string">初始化数据库表</span></span><br><span class="line">    <span class="attr">changes:</span> <span class="comment"># 对应 Change 数组。Change 是一个接口，每种操作对应一种 Change 实现类</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">sqlFile:</span> <span class="comment"># 使用 SQL 文件，对应 SQLFileChange 对象</span></span><br><span class="line">          <span class="attr">encoding:</span> <span class="string">utf8</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">classpath:db/changelog/sql/CHANGE_LOG_INIT_DB.sql</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>src/main/resources</code> 下创建目录 <code>db/changelog/sql/</code> ，并创建 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/sql/CHANGE_LOG_INIT_DB.sql"><code>CHANGE_LOG_INIT_DB.sql</code></a>文件如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建用户表</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `users` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;用户编号&#x27;</span>,</span><br><span class="line">  `username` <span class="type">varchar</span>(<span class="number">64</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;账号&#x27;</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">32</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;密码&#x27;</span>,</span><br><span class="line">  `create_time` datetime <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;创建时间&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`),</span><br><span class="line">  <span class="keyword">UNIQUE</span> KEY `idx_username` (`username`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 插入一条数据</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `users`(username, password, create_time) <span class="keyword">VALUES</span>(<span class="string">&#x27;zhuo&#x27;</span>, <span class="string">&#x27;password&#x27;</span>, now());</span><br></pre></td></tr></table></figure>
+
+<p>再次启动项目，日志如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">2020-07-04 21:21:49.694  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 21:21:49.746  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 21:21:49.777  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT `LOCKED` FROM github_demo.DATABASECHANGELOGLOCK WHERE ID=1</span><br><span class="line">2020-07-04 21:21:49.844  INFO 72084 --- [           main] l.lockservice.StandardLockService        : Successfully acquired change log lock</span><br><span class="line">2020-07-04 21:21:51.881  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MD5SUM FROM github_demo.DATABASECHANGELOG WHERE MD5SUM IS NOT NULL LIMIT 1</span><br><span class="line">2020-07-04 21:21:51.889  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 21:21:51.921  INFO 72084 --- [           main] l.c.StandardChangeLogHistoryService      : Reading from github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 21:21:51.921  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT * FROM github_demo.DATABASECHANGELOG ORDER BY DATEEXECUTED ASC, ORDEREXECUTED ASC</span><br><span class="line">2020-07-04 21:21:52.058  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : -- 创建用户表</span><br><span class="line">CREATE TABLE `users` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &#x27;用户编号&#x27;,</span><br><span class="line">  `username` varchar(64) DEFAULT NULL COMMENT &#x27;账号&#x27;,</span><br><span class="line">  `password` varchar(32) DEFAULT NULL COMMENT &#x27;密码&#x27;,</span><br><span class="line">  `create_time` datetime DEFAULT NULL COMMENT &#x27;创建时间&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `idx_username` (`username`)</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4</span><br><span class="line">2020-07-04 21:21:52.260  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : -- 插入一条数据</span><br><span class="line">INSERT INTO `users`(username, password, create_time) VALUES(&#x27;zhuo&#x27;, &#x27;password&#x27;, now())</span><br><span class="line">2020-07-04 21:21:52.283  INFO 72084 --- [           main] liquibase.changelog.ChangeSet            : SQL in file classpath:db/changelog/sql/CHANGE_LOG_INIT_DB.sql executed</span><br><span class="line">2020-07-04 21:21:52.309  INFO 72084 --- [           main] liquibase.changelog.ChangeSet            : ChangeSet classpath:/db/changelog/db_changelog.yaml::1::yizhuo ran successfully in 364ms</span><br><span class="line">2020-07-04 21:21:52.310  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MAX(ORDEREXECUTED) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 21:21:52.321  INFO 72084 --- [           main] liquibase.executor.jvm.JdbcExecutor      : INSERT INTO github_demo.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, `DESCRIPTION`, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES (&#x27;1&#x27;, &#x27;yizhuo&#x27;, &#x27;classpath:/db/changelog/db_changelog.yaml&#x27;, NOW(), 2, &#x27;8:88a193289a4da5d24c9fde1ae442fb3d&#x27;, &#x27;sqlFile&#x27;, &#x27;&#x27;, &#x27;EXECUTED&#x27;, NULL, NULL, &#x27;3.8.9&#x27;, &#x27;3868911933&#x27;)</span><br><span class="line">2020-07-04 21:21:52.377  INFO 72084 --- [           main] l.lockservice.StandardLockService        : Successfully released change log lock</span><br><span class="line">...</span><br><span class="line">2020-07-04 21:21:52.615  INFO 72084 --- [           main] c.g.z.liquibase.LiquibaseApplication     : Started LiquibaseApplication in 8.401 seconds (JVM running for 10.018)</span><br><span class="line">Disconnected from the target VM, address: &#x27;127.0.0.1:54078&#x27;, transport: &#x27;socket&#x27;</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
+
+<p>可以看到日志里执行了我们配置的初始化 SQL ，去数据库查看发现 users 表已经创建，并且 <code>DATABASECHANGELOG</code> 表又多了一条数据如下</p>
+<p><img data-src="%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704213227760.png" alt="image-20200704213227760"></p>
+<p>我们修改一下 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/sql/CHANGE_LOG_INIT_DB.sql"><code>CHANGE_LOG_INIT_DB.sql</code></a> 文件内容，新增一行注释如下</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 注释</span></span><br></pre></td></tr></table></figure>
+
+<p>再次启动项目，会发现日志报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2020-07-04 21:34:55.789  WARN 72294 --- [           main] s.c.a.AnnotationConfigApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#x27;liquibase&#x27; defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: Invocation of init method failed; nested exception is liquibase.exception.ValidationFailedException: Validation Failed:</span><br><span class="line">     1 change sets check sum</span><br><span class="line">          classpath:/db/changelog/db_changelog.yaml::1::yizhuo was: 8:88a193289a4da5d24c9fde1ae442fb3d but is now: 8:1b6bc2489cce8400e6aa8cfd2de6725f</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Liquibase 会给每个变更集合( Change Set )，计算出一个 <code>MD5SUM</code> 字段。这样，每次启动时，都会校验已经执行的变更集合( Change Set )，是否发生了改变。如果是，抛出异常。这样，保证不会因为 变更集合( Change Set ) 变更，导致出现问题。</p>
+</blockquote>
+<p>测试完成，将 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/sql/CHANGE_LOG_INIT_DB.sql"><code>CHANGE_LOG_INIT_DB.sql</code></a> 文件恢复原样。</p>
+<p>再次启动项目，日志如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">2020-07-04 21:55:43.289  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 21:55:43.319  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 21:55:43.337  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT `LOCKED` FROM github_demo.DATABASECHANGELOGLOCK WHERE ID=1</span><br><span class="line">2020-07-04 21:55:43.371  INFO 72969 --- [           main] l.lockservice.StandardLockService        : Successfully acquired change log lock</span><br><span class="line">2020-07-04 21:55:45.062  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MD5SUM FROM github_demo.DATABASECHANGELOG WHERE MD5SUM IS NOT NULL LIMIT 1</span><br><span class="line">2020-07-04 21:55:45.066  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 21:55:45.080  INFO 72969 --- [           main] l.c.StandardChangeLogHistoryService      : Reading from github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 21:55:45.080  INFO 72969 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT * FROM github_demo.DATABASECHANGELOG ORDER BY DATEEXECUTED ASC, ORDEREXECUTED ASC</span><br><span class="line">2020-07-04 21:55:45.113  INFO 72969 --- [           main] l.lockservice.StandardLockService        : Successfully released change log lock</span><br><span class="line">...</span><br><span class="line">2020-07-04 21:55:45.204  INFO 72969 --- [           main] c.g.z.liquibase.LiquibaseApplication     : Started LiquibaseApplication in 6.208 seconds (JVM running for 6.875)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在整个日志中，我可以看到 <code>ID = 1</code> 的变更集合( Change Set )不会重复执行。</p>
+</blockquote>
+<p>基于 SQL 的版本控制介绍完毕，大部分情况下我们都只使用基于 SQL 的版本控制，但是遇到复杂的业务需要根据业务逻辑处理数据，这时基于 SQL 的版本控制可能就不够用了，下面来介绍基于 Java 类的版本控制</p>
+<h5 id="5-基于-Java-类的版本控制"><a href="#5-基于-Java-类的版本控制" class="headerlink" title="5. 基于 Java 类的版本控制"></a>5. 基于 Java 类的版本控制</h5><p>在 <code>com.github.zhuyizhuo.liquibase.sample</code>目录下创建 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/java/com/github/zhuyizhuo/liquibase/sample/FixUsername.java"><code>FixUsername.java</code></a> 如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FixUsername</span> <span class="keyword">implements</span> <span class="title">CustomTaskChange</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Database database)</span> <span class="keyword">throws</span> CustomChangeException </span>&#123;</span><br><span class="line">        <span class="comment">//TODO 此处实现复杂业务逻辑  操作数据库之类</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行业务逻辑。。&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getConfirmationMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> SetupException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFileOpener</span><span class="params">(ResourceAccessor resourceAccessor)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ValidationErrors <span class="title">validate</span><span class="params">(Database database)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改 <a target="_blank" rel="noopener" href="https://github.com/zhuyizhuo/spring-boot-samples/blob/master/spring-boot-2.x-samples/spring-boot-samples-liquibase/src/main/resources/db/changelog/db_changelog.yaml"><code>db_changelog.yaml</code></a> 变更日志，增加 <code>ID = 2</code> 的变更集合( Change Set ) 。代码如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">changeSet:</span></span><br><span class="line">    <span class="attr">id:</span> <span class="number">2</span></span><br><span class="line">    <span class="attr">author:</span> <span class="string">yizhuo</span></span><br><span class="line">    <span class="attr">comments:</span> <span class="string">自定义业务逻辑类</span></span><br><span class="line">    <span class="attr">changes:</span> <span class="comment"># 对应 Change 数组。Change 是一个接口，每种操作对应一种 Change 实现类</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">customChange:</span> &#123;<span class="attr">class:</span> <span class="string">com.github.zhuyizhuo.liquibase.sample.FixUsername</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再次启动项目。执行日志如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">2020-07-04 22:09:33.489  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 22:09:33.537  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOGLOCK</span><br><span class="line">2020-07-04 22:09:33.548  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT `LOCKED` FROM github_demo.DATABASECHANGELOGLOCK WHERE ID=1</span><br><span class="line">2020-07-04 22:09:33.589  INFO 73234 --- [           main] l.lockservice.StandardLockService        : Successfully acquired change log lock</span><br><span class="line">2020-07-04 22:09:34.875  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MD5SUM FROM github_demo.DATABASECHANGELOG WHERE MD5SUM IS NOT NULL LIMIT 1</span><br><span class="line">2020-07-04 22:09:34.879  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT COUNT(*) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 22:09:34.886  INFO 73234 --- [           main] l.c.StandardChangeLogHistoryService      : Reading from github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 22:09:34.886  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT * FROM github_demo.DATABASECHANGELOG ORDER BY DATEEXECUTED ASC, ORDEREXECUTED ASC</span><br><span class="line">执行业务逻辑。。</span><br><span class="line">2020-07-04 22:09:34.905  INFO 73234 --- [           main] liquibase.changelog.ChangeSet            : null</span><br><span class="line">2020-07-04 22:09:34.908  INFO 73234 --- [           main] liquibase.changelog.ChangeSet            : ChangeSet classpath:/db/changelog/db_changelog.yaml::2::yizhuo ran successfully in 7ms</span><br><span class="line">2020-07-04 22:09:34.909  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : SELECT MAX(ORDEREXECUTED) FROM github_demo.DATABASECHANGELOG</span><br><span class="line">2020-07-04 22:09:34.912  INFO 73234 --- [           main] liquibase.executor.jvm.JdbcExecutor      : INSERT INTO github_demo.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, `DESCRIPTION`, COMMENTS, EXECTYPE, CONTEXTS, LABELS, LIQUIBASE, DEPLOYMENT_ID) VALUES (&#x27;2&#x27;, &#x27;yizhuo&#x27;, &#x27;classpath:/db/changelog/db_changelog.yaml&#x27;, NOW(), 3, &#x27;8:39259f2c0bad8428733b5b6c30d30a0a&#x27;, &#x27;customChange&#x27;, &#x27;&#x27;, &#x27;EXECUTED&#x27;, NULL, NULL, &#x27;3.8.9&#x27;, &#x27;3871774892&#x27;)</span><br><span class="line">2020-07-04 22:09:34.943  INFO 73234 --- [           main] l.lockservice.StandardLockService        : Successfully released change log lock</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>我们可以看到，ID = 2 的变更集合( Change Set )完成了执行。</p>
+</blockquote>
+<p>此时，我们去查询下 MySQL 。如下：</p>
+<p><img data-src="%5Cassets/picture/spring-boot-liquibase-database-version-controller/image-20200704221143804.png" alt="image-20200704221143804"></p>
+<h4 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h4><p>本文的完整工程可以查看下面仓库中的<code>spring-boot-samples-liquibase</code>目录：</p>
+<ul>
+<li>Github：<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1by9zcHJpbmctYm9vdC1zYW1wbGVzL3RyZWUvbWFzdGVyL3NwcmluZy1ib290LTIueC1zYW1wbGVz">https://github.com/zhuyizhuo/spring-boot-samples/tree/master/spring-boot-2.x-samples<i class="fa fa-external-link-alt"></i></span></li>
+<li>Gitee：<span class="exturl" data-url="aHR0cHM6Ly9naXRlZS5jb20vemh1eWl6aHVvL3NwcmluZy1ib290LXNhbXBsZXMvdHJlZS9tYXN0ZXIvc3ByaW5nLWJvb3QtMi54LXNhbXBsZXM=">https://gitee.com/zhuyizhuo/spring-boot-samples/tree/master/spring-boot-2.x-samples<i class="fa fa-external-link-alt"></i></span></li>
+</ul>
+<p><strong>如果您觉得本文不错，欢迎<code>Star</code>支持，您的关注是我坚持的动力！</strong></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/" title="SpringBoot 集成数据库版本管理工具 Liquibase">https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/SpringBoot/" rel="tag"><i class="fa fa-tag"></i> SpringBoot</a>
+              <a href="/tags/Original/" rel="tag"><i class="fa fa-tag"></i> Original</a>
+              <a href="/tags/Database/" rel="tag"><i class="fa fa-tag"></i> Database</a>
+              <a href="/tags/Liquibase/" rel="tag"><i class="fa fa-tag"></i> Liquibase</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/04/dev-tech/backend/spring/spring-boot-liquibase-database-version-control/" rel="prev" title="SpringBoot 集成数据库版本管理工具 Liquibase">
+                  <i class="fa fa-chevron-left"></i> SpringBoot 集成数据库版本管理工具 Liquibase
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/12/dev-tech/backend/spring/spring-boot-jackson/" rel="next" title="前后端通信有字段需要加解密你会如何处理">
+                  前后端通信有字段需要加解密你会如何处理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">373k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:39</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://www.zhuyizhuo.online/2020/07/04/dev-tech/database/spring-boot-liquibase-database-version-control/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>

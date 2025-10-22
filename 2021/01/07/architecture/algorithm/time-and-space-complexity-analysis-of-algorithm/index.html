@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="什么是算法？在计算机科学中，每当我们要解决一些计算问题时，我们都会定义一组解决该问题需要遵循的步骤。这些步骤统称为算法。 如何区分算法的好坏？针对特定问题可以有很多算法。那么，如何区分算法的好坏呢？ 让我们了解一个好的算法的属性：  正确性：如果算法对于每组输入都以正确的输出停止运行，则该算法被认为是正确的。如果没有为任何特定的输入集获得正确的输出，则你的算法是错误的。 有限性：通常，人们会忽略这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法的时间和空间复杂度分析">
+<meta property="og:url" content="https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="什么是算法？在计算机科学中，每当我们要解决一些计算问题时，我们都会定义一组解决该问题需要遵循的步骤。这些步骤统称为算法。 如何区分算法的好坏？针对特定问题可以有很多算法。那么，如何区分算法的好坏呢？ 让我们了解一个好的算法的属性：  正确性：如果算法对于每组输入都以正确的输出停止运行，则该算法被认为是正确的。如果没有为任何特定的输入集获得正确的输出，则你的算法是错误的。 有限性：通常，人们会忽略这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-07T13:45:21.000Z">
+<meta property="article:modified_time" content="2025-10-10T10:03:46.392Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/","path":"2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/","title":"算法的时间和空间复杂度分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>算法的时间和空间复杂度分析 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%AE%97%E6%B3%95%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是算法？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%8C%BA%E5%88%86%E7%AE%97%E6%B3%95%E7%9A%84%E5%A5%BD%E5%9D%8F%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">如何区分算法的好坏？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%95%88%E7%8E%87"><span class="nav-number">3.</span> <span class="nav-text">算法效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">4.</span> <span class="nav-text">空间复杂度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">5.</span> <span class="nav-text">时间复杂度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E6%83%85%E5%86%B5%EF%BC%8C%E5%B9%B3%E5%9D%87%E6%83%85%E5%86%B5%E5%92%8C%E6%9C%80%E5%9D%8F%E6%83%85%E5%86%B5"><span class="nav-number">5.1.</span> <span class="nav-text">最佳情况，平均情况和最坏情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%CE%98%E8%AE%B0%E5%8F%B7%EF%BC%88theta%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">Θ记号（theta）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%CE%A9%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="nav-number">5.3.</span> <span class="nav-text">Ω表示法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7O%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="nav-number">5.4.</span> <span class="nav-text">大O表示法</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法的时间和空间复杂度分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-07 21:45:21" itemprop="dateCreated datePublished" datetime="2021-01-07T21:45:21+08:00">2021-01-07</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="什么是算法？"><a href="#什么是算法？" class="headerlink" title="什么是算法？"></a>什么是算法？</h2><p>在计算机科学中，每当我们要解决一些计算问题时，我们都会定义一组解决该问题需要遵循的步骤。这些步骤统称为算法。</p>
+<h2 id="如何区分算法的好坏？"><a href="#如何区分算法的好坏？" class="headerlink" title="如何区分算法的好坏？"></a>如何区分算法的好坏？</h2><p>针对特定问题可以有很多算法。那么，如何区分算法的好坏呢？</p>
+<p>让我们了解一个好的算法的属性：</p>
+<ul>
+<li><strong>正确性：</strong>如果算法对于每组输入都以正确的输出停止运行，则该算法被认为是正确的。如果没有为任何特定的输入集获得正确的输出，则你的算法是错误的。</li>
+<li><strong>有限性：</strong>通常，人们会忽略这一点，但这是算法评估中的重要因素之一。该算法必须始终在有限数量的步骤后终止。例如，在递归和循环的情况下，你的算法应终止，否则最终将分别产生堆栈溢出和无限循环的情况。</li>
+<li><strong>效率：</strong>始终使用高效算法。效率一词是指：<ol>
+<li>该算法应有效地使用系统可用的资源。</li>
+<li>计算时间（生成对应于特定输入的输出所花费的时间）应尽可能短。</li>
+<li>算法使用的内存也应尽可能少。通常，在计算时间和内存之间需要权衡。因此，我们需要确定时间是否比空间重要，反之亦然，然后相应地编写算法。</li>
+</ol>
+</li>
+</ul>
+<p>因此，我们已经看到了可用于评估算法的三个因素。在这三个因素中，最重要的因素是算法的效率。</p>
+<h2 id="算法效率"><a href="#算法效率" class="headerlink" title="算法效率"></a>算法效率</h2><p>算法的效率主要由两个因素定义，即空间和时间。一种好的算法是占用更少的时间和更少的空间，但是不可能一直这样。在时间和空间之间需要权衡。如果要减少时间，则空间可能会增加。同样，如果要减少空间，则时间可能会增加。因此，你必须在空间或时间上妥协。让我们进一步了解算法的时空复杂度。</p>
+<h2 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h2><p>算法的空间复杂度表示对于各种输入大小，算法用于其工作所使用或需要的总空间。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List list = <span class="keyword">new</span> ArrayList();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">    list.add(i); </span><br></pre></td></tr></table></figure>
+
+<p>在上面的示例中，我们正在循环向列表中加入数据。因此，上述代码的空间复杂度约为“ n”，即，如果n增加，则空间需求也将相应增加。</p>
+<p>即使在创建变量时，也需要一些空间来运行算法。算法所需的所有空间统称为算法的空间复杂度。</p>
+<h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p>时间复杂度是算法针对<strong>输入大小</strong>执行的用于完成其任务的操作数（考虑到每个操作花费相同的时间量）。以最少数量的操作执行任务的算法被认为是效率最高的算法。</p>
+<blockquote>
+<p>时间复杂度是指执行这个算法所需要的计算工作量，其复杂度反映了程序执行时间<strong>「随输入规模增长而增长的量级」</strong>，在很大程度上能很好地反映出算法的优劣与否。一个算法花费的时间与算法中语句的<strong>「执行次数成正比」</strong>，执行次数越多，花费的时间就越多。一个算法中的执行次数称为语句频度或时间频度，记为T(n)，其中n称为问题的规模，当n不断变化时，它所呈现出来的规律，我们称之为时间复杂度。比如：T(n) = 3n^2与 T(n) = 5n^2*3n，虽然算法的时间频度不一样，但他们的时间复杂度却是一样的，<strong>「时间复杂度只关注最高数量级，且与之系数也没有关系」</strong>。</p>
+</blockquote>
+<p>算法所花费的时间还取决于<strong>你所使用的系统的计算速度</strong>，但是我们忽略了这些外部因素，并且仅考虑相对于输入大小，执行特定语句的次数。假设执行一条语句需要的时间为1秒，那么执行n条语句要花费的时间为n秒。</p>
+<p>假设你遇到一个问题，并且针对同一问题编写了三种算法。现在，你需要从这三种算法中选择一种。你会怎么做？</p>
+<ul>
+<li>你可以做的一件事就是在三台不同的计算机上运行所有三种算法，提供相同的输入，找到所有三种算法所花费的时间，然后选择花费最少时间的一种。可以吗 不，所有系统都可能使用某些不同的处理器。因此，处理速度可能会有所不同。因此，我们不能使用这种方法来找到最有效的算法。</li>
+<li>你可以做的另一件事是在同一台计算机上运行这三种算法，并尝试找出算法花费的时间并选择最佳的时间。但是在这里，你可能会得到错误的结果，因为在执行程序时，还有其他与你的程序一起执行的事情，因此你可能会获得错误的时间。</li>
+</ul>
+<p><strong>注意：</strong>此处要注意的一件事是，我们正在查找同一输入的不同算法所花费的时间，因为如果我们更改输入，那么与效率较低的算法相比，有效的算法可能会花费更多的时间，因为输入大小两种算法都不同。</p>
+<p>因此，我们已经看到，无法通过计算在特定系统中执行算法所花费的时间来判断算法。我们需要一些标准的符号来分析算法。我们使用<em><strong>渐近符号</strong></em>来分析任何算法，并在此基础上找到最有效的算法。在这里，以渐近符号表示，我们不考虑系统配置，而是考虑输入的<strong>增长顺序</strong>。我们尝试找出在增加/减少输入大小之后算法所花费的时间或空间将如何增加/减少。</p>
+<p>有三种渐近符号用于表示算法的时间复杂度。他们是：</p>
+<ul>
+<li><strong>Θ记号（theta）</strong></li>
+<li><strong>大O表示法</strong></li>
+<li><strong>Ω表示法</strong></li>
+</ul>
+<p>在了解这三种渐近符号之前，我们应该了解算法的最佳，平均和最差情况。</p>
+<h3 id="最佳情况，平均情况和最坏情况"><a href="#最佳情况，平均情况和最坏情况" class="headerlink" title="最佳情况，平均情况和最坏情况"></a>最佳情况，平均情况和最坏情况</h3><p>对于不同的输入，算法可以具有不同的时间。某些输入可能需要1秒，其他输入可能需要10秒。</p>
+<blockquote>
+<p><strong>例如：</strong>我们有一个名为“ <em>arr”的</em>数组和一个整数“ <em>k</em> ”。我们需要查找数组“ <em>arr</em> ”中是否存在整数“ <em>k</em> ” ？如果整数存在，则返回1，其他返回0。尝试为该问题创建算法。</p>
+</blockquote>
+<p>可以从上述问题中提取以下信息：</p>
+<ul>
+<li><strong>输入：</strong>这里的输入是一个大小为n的整数数组，我们需要在该数组中搜索一个整数k。</li>
+<li><strong>输出：</strong>如果在数组中找到元素“ k”，则返回1，否则返回0。</li>
+</ul>
+<p>现在，上述问题的一种可能解决方案是线性搜索，即遍历数组的每个元素，并将该元素与“ k”进行比较。如果等于“ k”，则返回1，否则，继续比较数组中的更多元素，如果到达数组的末尾却没有找到任何元素，则返回0。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> arr integer 数组</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> n 数组长度</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> k 要查找的值</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">searchK</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> n, <span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">          <span class="keyword">if</span> (arr[i] == k)</span><br><span class="line">              <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>分析上述代码</p>
+<ul>
+<li>i = 0  执行一次</li>
+<li>i &lt; n  执行 n+1 次</li>
+<li>i++    执行 n 次</li>
+<li>if(arr[i] == k) 执行 n 次(如果”k”没在数组里)</li>
+<li>return 1  执行 1 次(如果”k”在数组里)</li>
+<li>return 0  执行 1 次(如果”k”没在数组里)</li>
+</ul>
+<p>代码中的每个语句都需要固定的时间，我们设花费的时间为“ C”。因此，无论何时声明一个整数，更改某些整数或其他变量的值都需要花费固定时间，而比较两个变量也需要花费固定时间。因此，如果一条语句花费的时间为“ C”，而执行了“ N”次，则它将花费C * N的时间。现在，考虑一下我们刚刚编写的上述算法的以下输入：</p>
+<p><strong>注意：</strong>这里我们假设每个语句要花费1秒的时间来执行。</p>
+<ul>
+<li>如果输入数组为[1、2、3、4、5]，并且你想查找数组中是否存在“ 1”，则代码的 if 条件将执行1次，并找到元素1在数组中。因此，此处的if条件将花费1秒。</li>
+<li>如果输入数组为[1、2、3、4、5]，并且你想查找数组中是否存在“ 3”，则代码的 if 条件将执行3次，并找到元素3在数组中。因此，此处的if条件将花费3秒。</li>
+<li>如果输入数组为[1、2、3、4、5]，并且你想查找数组中是否存在“ 6”，则代码的 if 条件将执行5次，并找到数组中元素6不存在，在这种情况下算法将返回0。因此，此处的if条件需要5秒钟。</li>
+</ul>
+<p>如你所见，对于相同的输入数组，对于“ k”的不同值，我们具有不同的时间。因此，这可以分为三种情况：</p>
+<ul>
+<li><strong>最佳情况：</strong>这是算法运行时间的下限。我们必须知道导致最少数量的操作执行的情况。在上面的示例中，我们的数组为[1、2、3、4、5]，我们正在查找数组中是否存在“ 1”。因此，在这里，仅需进行一次比较，你就会知道你的元素存在于数组中。因此，这是算法的最佳情况。</li>
+<li><strong>平均情况：</strong>我们计算所有可能输入的运行时间，将所有计算出的值相加，然后将总和除以输入总数。我们必须知道（或预测）案件的分布。</li>
+<li><strong>最坏的情况：</strong>这是算法运行时间的上限。我们必须知道导致最大数量的操作执行的情况。在我们的示例中，最坏的情况是给定的数组为[1、2、3、4、5]，然后尝试查找数组中是否存在元素“ 6”。此处，循环的if条件将执行5次，然后算法将给出“ 0”作为输出。</li>
+</ul>
+<p>因此，我们了解了算法的最佳，平均和最差情况。现在，让我们回到渐近符号中，我们看到我们使用三种渐进符号来表示算法的复杂性，即Θ表示法（theta），Ω表示法，Big O表示法。</p>
+<p><strong>注意：</strong>在渐进分析中，我们通常处理较大的输入量。</p>
+<h3 id="Θ记号（theta）"><a href="#Θ记号（theta）" class="headerlink" title="Θ记号（theta）"></a>Θ记号（theta）</h3><p>Θ符号用于查找算法的平均界限，即它定义了上限和下限，你的算法将位于这些级别之间。</p>
+<h3 id="Ω表示法"><a href="#Ω表示法" class="headerlink" title="Ω表示法"></a>Ω表示法</h3><p>Ω表示算法的下限，即算法花费的时间不能低于此时间。换句话说，这是算法返回结果的最快时间。提供最佳情况输入时，算法花费的时间。</p>
+<h3 id="大O表示法"><a href="#大O表示法" class="headerlink" title="大O表示法"></a>大O表示法</h3><p>大O表示法定义了任何算法的上限，即算法所花费的时间不能超过此时间。换句话说，我们可以说大O表示法表示算法花费的最大时间或算法的最坏情况下的时间复杂度。因此，对于算法的时间复杂度而言，大O表示法是最常用的表示法。</p>
+<blockquote>
+<p>如果一个问题的规模是n，解这一问题的某一算法所需要的时间为T(n)。T(n)称为这一算法的“时间复杂度”。当输入量n逐渐加大时，时间复杂度的极限情形称为算法的“渐近时间复杂度”。空间复杂度同理。举个例子，令 f(n) = 2n^2✖️3n，O(f(n)) = O(2n^2 ✖️n)=O(n^2)。</p>
+</blockquote>
+<p>原文链接: <span class="exturl" data-url="aHR0cHM6Ly9hZnRlcmFjYWRlbXkuY29tL2Jsb2cvdGltZS1hbmQtc3BhY2UtY29tcGxleGl0eS1hbmFseXNpcy1vZi1hbGdvcml0aG0=">https://afteracademy.com/blog/time-and-space-complexity-analysis-of-algorithm<i class="fa fa-external-link-alt"></i></span></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/" title="算法的时间和空间复杂度分析">https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/05/dev-tech/backend/java/annotation/" rel="prev" title="@PostConstruct 与 @PreDestroy 注解">
+                  <i class="fa fa-chevron-left"></i> @PostConstruct 与 @PreDestroy 注解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/09/dev-tech/backend/java/bit-operation/" rel="next" title="原码反码补码与位运算">
+                  原码反码补码与位运算 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">373k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:39</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://www.zhuyizhuo.online/2021/01/07/architecture/algorithm/time-and-space-complexity-analysis-of-algorithm/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>

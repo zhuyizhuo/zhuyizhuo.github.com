@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/ico/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/ico/favicon.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.zhuyizhuo.online","root":"/","images":"/images","scheme":"Pisces","version":"8.7.1","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Freemarker 操作字符串substring（start,end）从一个字符串中截取子串。1234567891011start:截取子串开始的索引，start 必须大于等于 0，小于等于 endend: 截取子串的长度，end 必须大于等于 0，小于等于字符串长度，如果省略该参数，默认为字符串长度。例子：$&amp;#123;&amp;#x27;str&amp;#x27;?substring(0)&amp;#125; 结果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Freemarker 常用命令整理">
+<meta property="og:url" content="https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/index.html">
+<meta property="og:site_name" content="一卓的个人博客">
+<meta property="og:description" content="Freemarker 操作字符串substring（start,end）从一个字符串中截取子串。1234567891011start:截取子串开始的索引，start 必须大于等于 0，小于等于 endend: 截取子串的长度，end 必须大于等于 0，小于等于字符串长度，如果省略该参数，默认为字符串长度。例子：$&amp;#123;&amp;#x27;str&amp;#x27;?substring(0)&amp;#125; 结果">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-10-10T10:03:46.395Z">
+<meta property="article:author" content="一卓">
+<meta property="article:tag" content="Freemarker">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/","path":"2020/07/26/dev-tech/backend/java/freemarker/","title":"Freemarker 常用命令整理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Freemarker 常用命令整理 | 一卓的个人博客</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="一卓的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一卓的个人博客</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">长期维护，随缘更新。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Freemarker-%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.</span> <span class="nav-text">Freemarker 操作字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#substring%EF%BC%88start-end%EF%BC%89%E4%BB%8E%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%88%AA%E5%8F%96%E5%AD%90%E4%B8%B2%E3%80%82"><span class="nav-number">1.1.</span> <span class="nav-text">substring（start,end）从一个字符串中截取子串。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cap-first-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%95%E8%AF%8D%E7%9A%84%E9%A6%96%E5%AD%97%E6%AF%8D%E5%8F%98%E4%B8%BA%E5%A4%A7%E5%86%99%E3%80%82"><span class="nav-number">1.2.</span> <span class="nav-text">cap_first 将字符串中的第一个单词的首字母变为大写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uncap-first-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%95%E8%AF%8D%E7%9A%84%E9%A6%96%E5%AD%97%E6%AF%8D%E5%8F%98%E4%B8%BA%E5%B0%8F%E5%86%99%E3%80%82"><span class="nav-number">1.3.</span> <span class="nav-text">uncap_first 将字符串中的第一个单词的首字母变为小写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#capitalize-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E5%8D%95%E8%AF%8D%E7%9A%84%E9%A6%96%E5%AD%97%E6%AF%8D%E5%8F%98%E4%B8%BA%E5%A4%A7%E5%86%99%E3%80%82"><span class="nav-number">1.4.</span> <span class="nav-text">capitalize 将字符串中的所有单词的首字母变为大写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#date-time%EF%BC%8Cdatetime-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%97%A5%E6%9C%9F%E3%80%82"><span class="nav-number">1.5.</span> <span class="nav-text">date,time，datetime 将字符串转换为日期。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ends-with-%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%98%AF%E5%90%A6%E7%94%B1%E6%9F%90%E4%B8%AA%E5%AD%90%E4%B8%B2%E7%BB%93%E5%B0%BE%EF%BC%8C%E8%BF%94%E5%9B%9E%E5%B8%83%E5%B0%94%E5%80%BC%E3%80%82"><span class="nav-number">1.6.</span> <span class="nav-text">ends_with 判断某个字符串是否由某个子串结尾，返回布尔值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#html-%E7%94%A8%E4%BA%8E%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84-lt-%E3%80%81-gt-%E3%80%81-amp-%E5%92%8C%E2%80%9D%E6%9B%BF%E6%8D%A2%E4%B8%BA%E5%AF%B9%E5%BA%94%E5%AD%97%E7%AC%A6%E3%80%82"><span class="nav-number">1.7.</span> <span class="nav-text">html 用于将字符串中的 &lt;、&gt;、 &amp;和”替换为对应字符。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index-of%EF%BC%88substring-start%EF%BC%89%E5%9C%A8%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E6%9F%A5%E6%89%BE%E6%9F%90%E4%B8%AA%E5%AD%90%E4%B8%B2%EF%BC%8C%E8%BF%94%E5%9B%9E%E6%89%BE%E5%88%B0%E5%AD%90%E4%B8%B2%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E7%9A%84%E7%B4%A2%E5%BC%95%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%B2%A1%E6%9C%89%E6%89%BE%E5%88%B0%E5%AD%90%E4%B8%B2%EF%BC%8C%E5%88%99%E8%BF%94%E5%9B%9E-1%E3%80%82"><span class="nav-number">1.8.</span> <span class="nav-text">index_of（substring,start）在字符串中查找某个子串，返回找到子串的第一个字符的索引，如果没有找到子串，则返回-1。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#length-%E8%BF%94%E5%9B%9E%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E9%95%BF%E5%BA%A6-%E3%80%82"><span class="nav-number">1.9.</span> <span class="nav-text">length 返回字符串的长度 。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lower-case-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E4%B8%BA%E5%B0%8F%E5%86%99%E3%80%82"><span class="nav-number">1.10.</span> <span class="nav-text">lower_case 将字符串转为小写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#upper-case-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E4%B8%BA%E5%A4%A7%E5%86%99%E3%80%82"><span class="nav-number">1.11.</span> <span class="nav-text">upper_case 将字符串转为大写。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#contains-%E5%88%A4%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%AD%E6%98%AF%E5%90%A6%E5%8C%85%E5%90%AB%E6%9F%90%E4%B8%AA%E5%AD%90%E4%B8%B2%E3%80%82%E8%BF%94%E5%9B%9E%E5%B8%83%E5%B0%94%E5%80%BC%E3%80%82"><span class="nav-number">1.12.</span> <span class="nav-text">contains 判断字符中是否包含某个子串。返回布尔值。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#number-%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B0%E5%AD%97%E3%80%82"><span class="nav-number">1.13.</span> <span class="nav-text">number 将字符串转换为数字。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#replace-%E7%94%A8%E4%BA%8E%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84%E4%B8%80%E9%83%A8%E5%88%86%E4%BB%8E%E5%B7%A6%E5%88%B0%E5%8F%B3%E6%9B%BF%E6%8D%A2%E4%B8%BA%E5%8F%A6%E5%A4%96%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%82"><span class="nav-number">1.14.</span> <span class="nav-text">replace 用于将字符串中的一部分从左到右替换为另外的字符串。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#split-%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AE%9A%E7%9A%84%E5%88%86%E9%9A%94%E7%AC%A6%E5%B0%86%E4%B8%80%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%86%E5%88%86%E4%B8%BA%E4%B8%80%E7%BB%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%82"><span class="nav-number">1.15.</span> <span class="nav-text">split 使用指定的分隔符将一个字符串拆分为一组字符串。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trim-%E5%88%A0%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%A6%96%E5%B0%BE%E7%A9%BA%E6%A0%BC%E3%80%82"><span class="nav-number">1.16.</span> <span class="nav-text">trim 删除字符串首尾空格。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#if-else-%E5%88%86%E6%94%AF%E3%80%82"><span class="nav-number">1.17.</span> <span class="nav-text">if else 分支。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-if-colm-gt-%E5%88%A4%E6%96%AD%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8D%E4%B8%BA%E7%A9%BA%E6%88%96%E7%A9%BA%E4%B8%B2%E3%80%82"><span class="nav-number">1.18.</span> <span class="nav-text">&lt;#if colm??&gt; 判断字符串不为空或空串。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#freemarker-%E4%B8%AD%E5%AF%B9-null-%E5%80%BC%E9%97%AE%E9%A2%98%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">1.19.</span> <span class="nav-text">freemarker 中对 null 值问题的处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF-List"><span class="nav-number">2.</span> <span class="nav-text">循环 List</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#include-%E5%BC%95%E5%85%A5%E6%A8%A1%E6%9D%BF"><span class="nav-number">3.</span> <span class="nav-text">include 引入模板</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-overview">
+            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="一卓"
+      src="/assets/img/avatar.png">
+  <p class="site-author-name" itemprop="name">一卓</p>
+  <div class="site-description" itemprop="description">年轻无为，卖码为生。<br></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">69</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhuyizhuo"><i class="fab fa-github fa-fw"></i>GitHub</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly94LmNvbS96aHV5aXpodW8=" title="X → https:&#x2F;&#x2F;x.com&#x2F;zhuyizhuo"><i class="fab fa-twitter fa-fw"></i>X</span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnpodXlpemh1bzIwMTlAZ21haWwuY29t" title="E-Mail → mailto:zhuyizhuo2019@gmail.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</span>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <span class="exturl" data-url="aHR0cDovL3podXlpemh1by5naXRodWIuaW8vY29kZS1nZW5lcmF0b3ItZG9jLw==" title="http:&#x2F;&#x2F;zhuyizhuo.github.io&#x2F;code-generator-doc&#x2F;">代码生成器</span>
+        </li>
+    </ul>
+  </div>
+
+          </div>
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3podXlpemh1bw==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></span>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/img/avatar.png">
+      <meta itemprop="name" content="一卓">
+      <meta itemprop="description" content="年轻无为，卖码为生。<br>">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一卓的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Freemarker 常用命令整理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-26 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-26T00:00:00+08:00">2020-07-26</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Freemarker-操作字符串"><a href="#Freemarker-操作字符串" class="headerlink" title="Freemarker 操作字符串"></a>Freemarker 操作字符串</h2><h3 id="substring（start-end）从一个字符串中截取子串。"><a href="#substring（start-end）从一个字符串中截取子串。" class="headerlink" title="substring（start,end）从一个字符串中截取子串。"></a>substring（start,end）从一个字符串中截取子串。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">start:截取子串开始的索引，start 必须大于等于 0，小于等于 end</span><br><span class="line">end: 截取子串的长度，end 必须大于等于 0，小于等于字符串长度，如果省略该参数，默认为字符串长度。</span><br><span class="line">例子：</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(0)&#125; 结果为 str</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(1)&#125; 结果为 tr</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(2)&#125; 结果为 r</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(3)&#125; 结果为</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(0,0)&#125; 结果为</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(0,1)&#125; 结果为 s</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(0,2)&#125; 结果为 st</span><br><span class="line">$&#123;&#x27;str&#x27;?substring(0,3)&#125; 结果为 str</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="cap-first-将字符串中的第一个单词的首字母变为大写。"><a href="#cap-first-将字符串中的第一个单词的首字母变为大写。" class="headerlink" title="cap_first 将字符串中的第一个单词的首字母变为大写。"></a>cap_first 将字符串中的第一个单词的首字母变为大写。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&#x27;str&#x27;?cap_first&#125; 结果为 Str</span><br></pre></td></tr></table></figure>
+<h3 id="uncap-first-将字符串中的第一个单词的首字母变为小写。"><a href="#uncap-first-将字符串中的第一个单词的首字母变为小写。" class="headerlink" title="uncap_first 将字符串中的第一个单词的首字母变为小写。"></a>uncap_first 将字符串中的第一个单词的首字母变为小写。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&#x27;Str&#x27;?uncap_first&#125; 结果为 str</span><br></pre></td></tr></table></figure>
+<h3 id="capitalize-将字符串中的所有单词的首字母变为大写。"><a href="#capitalize-将字符串中的所有单词的首字母变为大写。" class="headerlink" title="capitalize 将字符串中的所有单词的首字母变为大写。"></a>capitalize 将字符串中的所有单词的首字母变为大写。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&#x27;str&#x27;?capitalize&#125; 结果为 STR</span><br></pre></td></tr></table></figure>
+
+<h3 id="date-time，datetime-将字符串转换为日期。"><a href="#date-time，datetime-将字符串转换为日期。" class="headerlink" title="date,time，datetime 将字符串转换为日期。"></a>date,time，datetime 将字符串转换为日期。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">例如：</span><br><span class="line">&lt;#assign date1=&quot;2009-10-12&quot;?date(&quot;yyyy-MM-dd&quot;)&gt;</span><br><span class="line">&lt;#assign date2=&quot;9:28:20&quot;?time(&quot;HH:mm:ss&quot;)&gt;</span><br><span class="line">&lt;#assign date3=&quot; 2009-10-12 9:28:20&quot;?time(&quot;HH:mm:ss&quot;)&gt;</span><br><span class="line">$&#123;date1&#125; 结果为 2009-10-12</span><br><span class="line">$&#123;date2&#125; 结果为 9:28:20</span><br><span class="line">$&#123;date3&#125; 结果为 2009-10-12 9:28:20</span><br><span class="line">注意：如果指定的字符串格式不正确将引发错误。</span><br></pre></td></tr></table></figure>
+
+<h3 id="ends-with-判断某个字符串是否由某个子串结尾，返回布尔值。"><a href="#ends-with-判断某个字符串是否由某个子串结尾，返回布尔值。" class="headerlink" title="ends_with 判断某个字符串是否由某个子串结尾，返回布尔值。"></a>ends_with 判断某个字符串是否由某个子串结尾，返回布尔值。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;string&quot;?ends_with(&quot;ing&quot;)?string&#125; 返回结果为 true</span><br><span class="line">注意：布尔值必须转换为字符串才能输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="html-用于将字符串中的-lt-、-gt-、-amp-和”替换为对应字符。"><a href="#html-用于将字符串中的-lt-、-gt-、-amp-和”替换为对应字符。" class="headerlink" title="html 用于将字符串中的 &lt;、&gt;、 &amp;和”替换为对应字符。"></a>html 用于将字符串中的 &lt;、&gt;、 &amp;和”替换为对应字符。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;lt;&amp;gt;&amp;quot:&amp;amp</span><br></pre></td></tr></table></figure>
+
+<h3 id="index-of（substring-start）在字符串中查找某个子串，返回找到子串的第一个字符的索引，如果没有找到子串，则返回-1。"><a href="#index-of（substring-start）在字符串中查找某个子串，返回找到子串的第一个字符的索引，如果没有找到子串，则返回-1。" class="headerlink" title="index_of（substring,start）在字符串中查找某个子串，返回找到子串的第一个字符的索引，如果没有找到子串，则返回-1。"></a>index_of（substring,start）在字符串中查找某个子串，返回找到子串的第一个字符的索引，如果没有找到子串，则返回-1。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Start 参数用于指定从字符串的那个索引处开始搜索，start 为数字值。</span><br><span class="line">如果 start 大于字符串长度，则 start 取值等于字符串长度，如果 start 小于 0， 则 start 取值为 0。</span><br><span class="line">$&#123;&quot;string&quot;?index_of(&quot;in&quot;)  结果为 3</span><br><span class="line">$&#123;&quot;string&quot;?index_of(&quot;ab&quot;)  结果为-1</span><br></pre></td></tr></table></figure>
+
+<h3 id="length-返回字符串的长度-。"><a href="#length-返回字符串的长度-。" class="headerlink" title="length 返回字符串的长度 。"></a>length 返回字符串的长度 。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;string&quot;?length&#125; 结果为 6</span><br></pre></td></tr></table></figure>
+
+<h3 id="lower-case-将字符串转为小写。"><a href="#lower-case-将字符串转为小写。" class="headerlink" title="lower_case 将字符串转为小写。"></a>lower_case 将字符串转为小写。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;STRING&quot;?lower_case&#125; 结果为 string</span><br></pre></td></tr></table></figure>
+
+<h3 id="upper-case-将字符串转为大写。"><a href="#upper-case-将字符串转为大写。" class="headerlink" title="upper_case 将字符串转为大写。"></a>upper_case 将字符串转为大写。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;string&quot;?upper_case&#125; 结果为 STRING</span><br></pre></td></tr></table></figure>
+
+<h3 id="contains-判断字符中是否包含某个子串。返回布尔值。"><a href="#contains-判断字符中是否包含某个子串。返回布尔值。" class="headerlink" title="contains 判断字符中是否包含某个子串。返回布尔值。"></a>contains 判断字符中是否包含某个子串。返回布尔值。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;string&quot;?contains(&quot;ing&quot;)?string&#125;  结果为 true</span><br><span class="line">注意：布尔值必须转换为字符串才能输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="number-将字符串转换为数字。"><a href="#number-将字符串转换为数字。" class="headerlink" title="number 将字符串转换为数字。"></a>number 将字符串转换为数字。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;111.11&quot;?number&#125; 结果为 111.11</span><br></pre></td></tr></table></figure>
+
+<h3 id="replace-用于将字符串中的一部分从左到右替换为另外的字符串。"><a href="#replace-用于将字符串中的一部分从左到右替换为另外的字符串。" class="headerlink" title="replace 用于将字符串中的一部分从左到右替换为另外的字符串。"></a>replace 用于将字符串中的一部分从左到右替换为另外的字符串。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;strabg&quot;?replace(&quot;ab&quot;,&quot;in&quot;)&#125;  结果为 string</span><br></pre></td></tr></table></figure>
+
+<h3 id="split-使用指定的分隔符将一个字符串拆分为一组字符串。"><a href="#split-使用指定的分隔符将一个字符串拆分为一组字符串。" class="headerlink" title="split 使用指定的分隔符将一个字符串拆分为一组字符串。"></a>split 使用指定的分隔符将一个字符串拆分为一组字符串。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;#list &quot;This|is|split&quot;?split(&quot;|&quot;) as s&gt;</span><br><span class="line">$&#123;s&#125;</span><br><span class="line">&lt;/#list&gt;</span><br><span class="line">结果为:</span><br><span class="line">This</span><br><span class="line">is</span><br><span class="line">split</span><br></pre></td></tr></table></figure>
+
+<h3 id="trim-删除字符串首尾空格。"><a href="#trim-删除字符串首尾空格。" class="headerlink" title="trim 删除字符串首尾空格。"></a>trim 删除字符串首尾空格。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot; String &quot;?trim&#125;  结果为 String</span><br></pre></td></tr></table></figure>
+
+<h3 id="if-else-分支。"><a href="#if-else-分支。" class="headerlink" title="if else 分支。"></a>if else 分支。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;#if x == 1&gt;</span><br><span class="line">  x is 1</span><br><span class="line">&lt;#else&gt;</span><br><span class="line">  x is not 1</span><br><span class="line">&lt;/#if&gt;</span><br><span class="line"></span><br><span class="line">&lt;#if x == 1&gt;</span><br><span class="line">  x is 1</span><br><span class="line">&lt;#elseif x == 2&gt;</span><br><span class="line">  x is 2</span><br><span class="line">&lt;#elseif x == 3&gt;</span><br><span class="line">  x is 3</span><br><span class="line">&lt;/#if&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="lt-if-colm-gt-判断字符串不为空或空串。"><a href="#lt-if-colm-gt-判断字符串不为空或空串。" class="headerlink" title="&lt;#if colm??&gt; 判断字符串不为空或空串。"></a>&lt;#if colm??&gt; 判断字符串不为空或空串。</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;#if colm??&gt;&lt;/#if&gt; 判断字符串不为 null</span><br><span class="line">&lt;#if letVo.manageScore!=&quot;&quot;&gt;&lt;/#if&gt; 判断字符串不为空串</span><br><span class="line">&lt;#if letVo.manageScore??  &amp;&amp; letVo.manageScore != &quot;&quot;&gt; </span><br><span class="line"> letVo.manageScore 存在,并且不是空串,输出</span><br><span class="line">&lt;#else&gt;</span><br><span class="line"> 否则输出</span><br><span class="line">&lt;/#if&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="freemarker-中对-null-值问题的处理"><a href="#freemarker-中对-null-值问题的处理" class="headerlink" title="freemarker 中对 null 值问题的处理"></a>freemarker 中对 null 值问题的处理</h3><p>freemarker 不支持 null，如果值为 null 会报错。可使用如下方法处理：</p>
+<ul>
+<li>${name!} 在属性后面加感叹号即可过滤null和空字符串</li>
+<li>${age!’0’} 如果 age 为 null，默认给’0’</li>
+<li>${tableInfo.tableComment!’${tableInfo.tableName}’}  如果 tableInfo.tableComment 为 null，默认给 tableInfo.tableName</li>
+</ul>
+<h2 id="循环-List"><a href="#循环-List" class="headerlink" title="循环 List"></a>循环 List</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;#list tableInfo.columnLists as colm&gt;</span><br><span class="line">	private $&#123;colm.javaDataType&#125; $&#123;colm.javaColumnName&#125;;</span><br><span class="line">&lt;/#list&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="include-引入模板"><a href="#include-引入模板" class="headerlink" title="include 引入模板"></a>include 引入模板</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;#include &quot;common.ftl&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请作者喝杯咖啡吧</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/assets/img/wechatpay.jpg" alt="一卓 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/assets/img/alipay.jpg" alt="一卓 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>一卓
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/" title="Freemarker 常用命令整理">https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LzQuMC9kZWVkLnpo"><i class="fab fa-fw fa-creative-commons"></i>BY</span> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Freemarker/" rel="tag"><i class="fa fa-tag"></i> Freemarker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/07/25/dev-tech/backend/java/jvm-bytecode-instruction-table/" rel="prev" title="JVM 虚拟机字节码指令表">
+                  <i class="fa fa-chevron-left"></i> JVM 虚拟机字节码指令表
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/07/28/dev-tech/backend/java/uml/" rel="next" title="UML 类图几种关系的总结">
+                  UML 类图几种关系的总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><span class="exturl" data-url="aHR0cHM6Ly9iZWlhbi5taWl0Lmdvdi5jbg==">京ICP备2021031644号-1 </span>
+      <img src="/assets/img/gongan.png" alt=""><span class="exturl" data-url="aHR0cDovL3d3dy5iZWlhbi5nb3YuY24vcG9ydGFsL3JlZ2lzdGVyU3lzdGVtSW5mbz9yZWNvcmRjb2RlPTExMDExNTAyMDM4NDMx">京公网安备11011502038431 </span>
+  </div>
+
+<div class="copyright">
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一卓</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">373k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:39</span>
+  </span>
+</div>
+  <div class="powered-by">由 <span class="exturl" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://www.zhuyizhuo.online/2020/07/26/dev-tech/backend/java/freemarker/"}</script>
+  <script src="/js/third-party/quicklink.js"></script>
+
+</body>
+</html>
